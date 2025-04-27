@@ -1,0 +1,49 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.OpenCalendar" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Primary brand color (более светлые оттенки) -->
+        <item name="colorPrimary">@color/purple_200</item>
+        <item name="colorPrimaryVariant">@color/purple_300</item>
+
+        <!-- Secondary color -->
+        <item name="colorSecondary">@color/teal_200</item>
+        <item name="colorSecondaryVariant">@color/teal_300</item>
+
+        <!-- Цвет фона -->
+        <item name="android:windowBackground">@color/dark_background</item>
+
+        <!-- Цвета текста -->
+        <item name="android:textColorPrimary">@color/white</item>  <!-- Белый текст в темной теме -->
+        <item name="android:textColorSecondary">@color/gray_300</item>
+
+        <!-- Стиль кнопок (переопределяем для темной темы) -->
+        <item name="materialButtonStyle">@style/MyButtonStyle.Dark</item>
+    </style>
+
+    <!-- Base application theme for dark mode -->
+    <style name="Center_Theme" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Primary brand color (более светлые оттенки) -->
+        <item name="colorPrimary">@color/purple_200</item>
+        <item name="colorPrimaryVariant">@color/purple_300</item>
+
+        <!-- Secondary color -->
+        <item name="colorSecondary">@color/teal_200</item>
+        <item name="colorSecondaryVariant">@color/teal_300</item>
+
+        <!-- Цвет фона -->
+        <item name="android:windowBackground">@color/dark_background</item>
+
+        <!-- Цвета текста -->
+        <item name="android:textColorPrimary">@color/white</item>  <!-- Белый текст в темной теме -->
+        <item name="android:textColorSecondary">@color/gray_300</item>
+
+        <!-- Стиль кнопок (переопределяем для темной темы) -->
+        <item name="materialButtonStyle">@style/MyButtonStyle.Dark</item>
+    </style>
+
+    <!-- Стиль кнопок для темной темы -->
+    <style name="MyButtonStyle.Dark" parent="Widget.Material3.Button">
+        <item name="android:textColor">@color/black</item>  <!-- Темный текст на светлых кнопках -->
+        <item name="backgroundTint">?attr/colorPrimary</item>
+    </style>
+</resources>

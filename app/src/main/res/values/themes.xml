@@ -1,0 +1,57 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.OpenCalendar" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Primary brand color -->
+        <item name="colorPrimary">@color/purple_500</item>
+        <item name="colorPrimaryVariant">@color/purple_700</item>
+
+        <!-- Secondary color (для кнопок и т.д.) -->
+        <item name="colorSecondary">@color/teal_200</item>
+        <item name="colorSecondaryVariant">@color/teal_700</item>
+
+        <!-- Цвет фона -->
+        <item name="android:windowBackground">@color/white</item>
+
+        <!-- Цвета текста (автоматически инвертируются в темной теме) -->
+        <item name="android:textColorPrimary">@color/black</item>  <!-- Основной текст -->
+        <item name="android:textColorSecondary">@color/gray_600</item>  <!-- Вторичный текст -->
+
+        <!-- Цвет кнопок -->
+        <item name="materialButtonStyle">@style/MyButtonStyle</item>
+
+        <!-- Status bar -->
+        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+    </style>
+
+    <!-- Base application theme for light mode -->
+    <style name="Center_Theme" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Primary brand color -->
+        <item name="colorPrimary">@color/purple_500</item>
+        <item name="colorPrimaryVariant">@color/purple_700</item>
+
+        <!-- Secondary color (для кнопок и т.д.) -->
+        <item name="colorSecondary">@color/teal_200</item>
+        <item name="colorSecondaryVariant">@color/teal_700</item>
+
+        <!-- Цвет фона -->
+        <item name="android:windowBackground">@color/white</item>
+
+        <!-- Цвета текста (автоматически инвертируются в темной теме) -->
+        <item name="android:textColorPrimary">@color/black</item>  <!-- Основной текст -->
+        <item name="android:textColorSecondary">@color/gray_600</item>  <!-- Вторичный текст -->
+
+        <!-- Цвет кнопок -->
+        <item name="materialButtonStyle">@style/MyButtonStyle</item>
+
+        <!-- Status bar -->
+        <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
+    </style>
+
+    <!-- Стиль для кнопок -->
+    <style name="MyButtonStyle" parent="Widget.Material3.Button">
+        <item name="android:textColor">@color/white</item>
+        <item name="backgroundTint">?attr/colorPrimary</item>
+        <item name="android:minHeight">48dp</item>
+    </style>
+    <style name="Theme.OpenCalendar" parent="Base.Theme.OpenCalendar" />
+</resources>
