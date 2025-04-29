@@ -7,7 +7,9 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:theme="@style/Base.Theme.OpenCalendar"
-    tools:context=".MainActivity">
+    tools:context=".MainActivity"
+    app:layout_constraintTop_toBottomOf="@+id/textView4"
+    android:layout_marginTop="10dp">
 
 
     <androidx.appcompat.widget.Toolbar
@@ -94,13 +96,13 @@
         android:id="@+id/GoTodayButton"
         android:layout_width="45dp"
         android:layout_height="40dp"
-        android:layout_marginStart="277dp"
+        android:layout_marginStart="100dp"
         android:layout_marginTop="5dp"
         android:backgroundTint="#00FFFFFF"
         android:padding="0dp"
         android:textColor="@color/today_highlight"
         android:textSize="30dp"
-        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/DayText"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="27" /> <!-- Убрано фиксированное значение, будет устанавливаться программно -->
 

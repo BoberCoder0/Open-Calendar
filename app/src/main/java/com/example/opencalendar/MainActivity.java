@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 import java.util.Calendar;
 
+
 /**
  * Главная Activity приложения, реализующая календарь с возможностью
  * перелистывания месяцев и отображения событий
@@ -28,6 +29,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
         // Инициализация всех компонентов
         initViews();
@@ -95,8 +97,11 @@ public class MainActivity extends AppCompatActivity {
         // Устанавливаем начальную позицию (для бесконечного скролла)
         monthViewPager.setCurrentItem(MonthPagerAdapter.INITIAL_POSITION, false);
 
-        // Добавляем анимацию перелистывания страниц
-        monthViewPager.setPageTransformer(new DepthPageTransformer());
+        //Замените DepthPageTransformer на новый:
+        monthViewPager.setPageTransformer(new SlidePageTransformer());
+
+        /*// Добавляем анимацию перелистывания страниц
+        monthViewPager.setPageTransformer(new DepthPageTransformer());*/
 
         // Обработчик изменения страницы (для обновления даты в заголовке)
         monthViewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
@@ -175,10 +180,13 @@ public class MainActivity extends AppCompatActivity {
     }
 }
 
+
+
 /**
  * Класс для анимации перелистывания страниц в ViewPager2
  * Создает эффект "глубины" при перелистывании
  */
+/*
 class DepthPageTransformer implements ViewPager2.PageTransformer {
     private static final float MIN_SCALE = 0.75f;  // Минимальный масштаб страницы
 
@@ -204,4 +212,4 @@ class DepthPageTransformer implements ViewPager2.PageTransformer {
             view.setAlpha(0f);
         }
     }
-}
+}*/

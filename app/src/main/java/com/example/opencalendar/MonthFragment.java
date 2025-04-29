@@ -30,6 +30,7 @@ public class MonthFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_month, container, false);
 
+
         // Инициализация UI элементов
         monthTitle = view.findViewById(R.id.monthTitle);
         calendarGrid = view.findViewById(R.id.calendarGrid);
@@ -78,14 +79,14 @@ public class MonthFragment extends Fragment {
         calendarGrid.setAdapter(adapter);
 
         // 6. Настраиваем обработчик кликов по дням
-        calendarGrid.setOnItemClickListener((parent, view, position, id) -> {
+        /*calendarGrid.setOnItemClickListener((parent, view, position, id) -> {
             String selectedDay = days.get(position);
             if (!selectedDay.isEmpty()) {
                 onDaySelected(calendar.get(Calendar.YEAR),
                         calendar.get(Calendar.MONTH),
                         Integer.parseInt(selectedDay));
             }
-        });
+        });*/
 
         calendarGrid.setOnTouchListener((v, event) -> {
             getParentFragmentManager().setFragmentResult("requestKey", new Bundle());

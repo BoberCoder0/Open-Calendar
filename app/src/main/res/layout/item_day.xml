@@ -4,11 +4,24 @@
     android:layout_height="wrap_content"
     android:minHeight="48dp">
 
+    <!--&lt;!&ndash; Фон дня (квадратный с закруглёнными краями) &ndash;&gt;
     <TextView
         android:id="@+id/dayText"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_width="40dp"
+    android:layout_height="40dp"
+    android:gravity="center"
+    android:background="@drawable/today_bg"
+    android:textColor="#000000" />-->
+
+    <TextView
+        android:theme="@style/Center_Theme"
+        android:id="@+id/dayText"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:minWidth="40dp"
+        android:minHeight="40dp"
         android:gravity="center"
-        android:textSize="16sp"/>
+        android:background="@drawable/day_cell_background"/>
+    <!-- Фон будет устанавливаться программно -->
 
 </FrameLayout>
