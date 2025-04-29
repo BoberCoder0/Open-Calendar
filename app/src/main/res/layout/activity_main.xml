@@ -94,15 +94,15 @@
 
     <Button
         android:id="@+id/GoTodayButton"
-        android:theme="@style/Base.Theme.OpenCalendar"
         android:layout_width="45dp"
         android:layout_height="40dp"
-        android:layout_marginStart="100dp"
+        android:layout_marginStart="80dp"
         android:layout_marginTop="5dp"
         android:backgroundTint="#00FFFFFF"
         android:padding="0dp"
         android:textColor="@color/today_highlight"
         android:textSize="30dp"
+        android:theme="@style/Base.Theme.OpenCalendar"
         app:layout_constraintStart_toEndOf="@+id/DayText"
         app:layout_constraintTop_toTopOf="parent"
         tools:text="27" /> <!-- Убрано фиксированное значение, будет устанавливаться программно -->
@@ -118,18 +118,6 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
-    <TextView
-        android:id="@+id/textView4"
-        android:layout_width="367dp"
-        android:layout_height="19dp"
-        android:layout_marginStart="9dp"
-        android:layout_marginTop="3dp"
-        android:text=" Пн           Вт           Ср            Чт           Пт           Сб            Вс"
-        android:textColor="@color/black"
-        android:theme="@style/Base.Theme.OpenCalendar"
-        app:layout_constraintEnd_toEndOf="@+id/toolbar2"
-        app:layout_constraintStart_toStartOf="@+id/toolbar2"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
     <ScrollView
         android:layout_width="396dp"

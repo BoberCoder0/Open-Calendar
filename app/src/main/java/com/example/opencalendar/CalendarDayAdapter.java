@@ -200,4 +200,14 @@ public class CalendarDayAdapter extends ArrayAdapter<String> {
         selectedPosition = position;
         notifyDataSetChanged();  // Перерисовываем GridView
     }
+
+    //оптимизация
+    @Override
+    public int getViewTypeCount() {
+        return 1;
+    }
+    @Override
+    public int getItemViewType(int position) {
+        return 0;
+    }
 }

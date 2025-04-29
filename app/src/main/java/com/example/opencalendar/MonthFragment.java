@@ -1,6 +1,7 @@
 package com.example.opencalendar;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +31,7 @@ public class MonthFragment extends Fragment {
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_month, container, false);
 
+        Log.d("MonthFragment", "View created for monthOffset: " + monthOffset);
 
         // Инициализация UI элементов
         monthTitle = view.findViewById(R.id.monthTitle);
@@ -45,6 +47,7 @@ public class MonthFragment extends Fragment {
 
         setupMonthView();
         return view;
+
 
 
     }
@@ -119,22 +122,41 @@ public class MonthFragment extends Fragment {
      */
     private List<String> generateDaysForMonth(Calendar calendar) {
         List<String> days = new ArrayList<>();
+
+        // 1. Получаем количество дней в текущем месяце
         int daysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
 
-        // Устанавливаем 1-е число месяца и получаем день недели
+        // 2. Настраиваем календарь на первый день месяца
         calendar.set(Calendar.DAY_OF_MONTH, 1);
+
+        // 3. Устанавливаем понедельник как первый день недели
+        calendar.setFirstDayOfWeek(Calendar.MONDAY);
+
+        // 4. Получаем день недели для 1-го числа месяца
+        // (Calendar.MONDAY=2, ..., Calendar.SUNDAY=1)
         int firstDayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
 
-        // Добавляем пустые строки для выравнивания первого дня
-        // (Calendar.SUNDAY = 1, Calendar.SATURDAY = 7)
-        for (int i = 1; i < firstDayOfWeek; i++) {
+        // 5. Вычисляем смещение для правильного выравнивания
+        // Формула корректирует разницу между системным представлением и нашим (где понедельник=0)
+        int offset;
+        if (firstDayOfWeek == Calendar.SUNDAY) {
+            offset = 6; // Воскресенье - последний день недели
+        } else {
+            offset = firstDayOfWeek - Calendar.MONDAY;
+        }
+
+        // 6. Добавляем пустые строки для выравнивания первого дня
+        for (int i = 0; i < offset; i++) {
             days.add("");
         }
 
-        // Добавляем все дни месяца
+        // 7. Добавляем все дни месяца
         for (int i = 1; i <= daysInMonth; i++) {
             days.add(String.valueOf(i));
         }
+
+        // 8. Логирование для отладки
+        Log.d("Calendar", "Generated days: " + days.size() + ", starts with: " + (days.size() > 0 ? days.get(0) : "empty"));
 
         return days;
     }
@@ -158,5 +180,6 @@ public class MonthFragment extends Fragment {
         fragment.setArguments(args);
         return fragment;
     }
+
 
 }
