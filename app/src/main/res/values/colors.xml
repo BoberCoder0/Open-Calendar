@@ -18,4 +18,14 @@
 
     <!-- Фоны -->
     <color name="dark_background">#121212</color>
+
+    <!--хззз-->
+
+    <color name="today_highlight">#FF4285F4</color>
+    <color name="today_text">#FFFFFF</color>
+
+
+    <color name="today_highlight2">#4285F4</color>
+    <color name="day_selected">#34A853</color>
+
 </resources>

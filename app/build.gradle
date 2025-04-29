@@ -2,18 +2,43 @@ plugins {
     alias(libs.plugins.android.application)
 }
 
+// Функция для получения количества коммитов
+def getGitCommitCount() {
+    try {
+        def process = "git rev-list --count HEAD".execute()
+        process.waitFor()
+        return process.text.trim().toInteger()
+    } catch (Exception e) {
+        println("Error getting git commit count: ${e.message}")
+        return 1 // Возвращаем 1 если git не доступен
+    }
+}
+
+// Функция для генерации versionName
+def getGitVersionName() {
+    try {
+        def tag = "git describe --tags --abbrev=0".execute().text.trim() // Последний тег
+        def commits = "git rev-list --count ${tag}..HEAD".execute().text.trim().toInteger()
+        return "${tag.replace("v", "")}-rc${commits}"
+    } catch (Exception e) {
+        println("Error getting git version: ${e.message}")
+        return "1.0.0" // Версия по умолчанию
+    }
+}
+
 android {
     namespace 'com.example.opencalendar'
     compileSdk 35
 
     defaultConfig {
         applicationId "com.example.opencalendar"
+        versionCode getGitCommitCount()
+        versionName getGitVersionName()
         minSdk 29
-        targetSdk 35
-        versionCode 1
-        versionName "1.0"
+        targetSdk 34
 
-        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        // Для аппаратного ускорения используйте manifestPlaceholders
+        manifestPlaceholders = [androidHardwareAccelerated: "true"]
     }
 
     buildTypes {
@@ -22,6 +47,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_11
         targetCompatibility JavaVersion.VERSION_11
@@ -29,11 +55,11 @@ android {
 }
 
 dependencies {
-
     implementation libs.appcompat
     implementation libs.material
     implementation libs.activity
     implementation libs.constraintlayout
+    implementation 'androidx.viewpager2:viewpager2:1.0.0'
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core

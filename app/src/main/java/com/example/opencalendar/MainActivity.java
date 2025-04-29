@@ -1,51 +1,207 @@
 package com.example.opencalendar;
 
 import android.graphics.Outline;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.view.ViewOutlineProvider;
+import android.widget.Button;
 import android.widget.ImageButton;
-
-import androidx.activity.EdgeToEdge;
+import android.widget.TextView;
+import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.graphics.Insets;
-import androidx.core.view.ViewCompat;
-import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.RecyclerView;
+import androidx.viewpager2.widget.ViewPager2;
+import java.util.Calendar;
 
+/**
+ * Главная Activity приложения, реализующая календарь с возможностью
+ * перелистывания месяцев и отображения событий
+ */
 public class MainActivity extends AppCompatActivity {
+    // UI элементы
+    private ViewPager2 monthViewPager;  // Для горизонтального перелистывания месяцев
+    private MonthPagerAdapter monthPagerAdapter;  // Адаптер для ViewPager2
+    private TextView yearText, monthText, dayText;  // Текстовые поля для отображения даты
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        EdgeToEdge.enable(this);
         setContentView(R.layout.activity_main);
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
-            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
-            return insets;
+
+        // Инициализация всех компонентов
+        initViews();
+        setupMonthPager();
+        setupAccountButton();
+
+        // Установка текущей даты при запуске
+        Calendar today = Calendar.getInstance();
+        Button goTodayButton = findViewById(R.id.GoTodayButton);
+        goTodayButton.setText(String.valueOf(today.get(Calendar.DAY_OF_MONTH)));
+
+        updateDateText(MonthPagerAdapter.INITIAL_POSITION);
+
+        // Подписываемся на события выбора даты
+        getSupportFragmentManager().setFragmentResultListener("dateSelected", this, (requestKey, result) -> {
+            int year = result.getInt("year");
+            int month = result.getInt("month");
+            int day = result.getInt("day");
+
+            // Обновляем верхнюю панель
+            yearText.setText(String.valueOf(year));
+            monthText.setText(String.format(".%02d", month + 1));
+            dayText.setText(String.format(".%02d", day));
         });
 
-        // Получаем ссылку на ImageButton из макета по его ID
-        ImageButton btn = findViewById(R.id.Account_Button);
+    }
 
-// Устанавливаем провайдер для определения формы (outline) кнопки
-        btn.setOutlineProvider(new ViewOutlineProvider() {
+    /**
+     * Инициализация всех View элементов
+     */
+    private void initViews() {
+        yearText = findViewById(R.id.YearText);  // Поле года (например: 2023)
+        monthText = findViewById(R.id.MonthText);  // Поле месяца (например: .04)
+        dayText = findViewById(R.id.DayText);  // Поле дня (например: .27)
+
+        monthViewPager = findViewById(R.id.monthViewPager);  // ViewPager для месяцев
+
+        Button goTodayButton = findViewById(R.id.GoTodayButton);
+        goTodayButton.setOnClickListener(v -> goToToday());
+    }
+
+    // Новый метод для перехода к текущей дате
+    private void goToToday() {
+        // Устанавливаем текущую дату в кнопке
+        Calendar today = Calendar.getInstance();
+        Button goTodayButton = findViewById(R.id.GoTodayButton);
+        goTodayButton.setText(String.valueOf(today.get(Calendar.DAY_OF_MONTH)));
+
+        // Вычисляем позицию для текущего месяца
+        int currentPosition = MonthPagerAdapter.INITIAL_POSITION;
+        monthViewPager.setCurrentItem(currentPosition, true);
+
+        // Обновляем отображение даты
+        updateDateText(currentPosition);
+    }
+
+    /**
+     * Настройка ViewPager для перелистывания месяцев
+     */
+    private void setupMonthPager() {
+        // Создаем адаптер, который будет создавать фрагменты месяцев
+        monthPagerAdapter = new MonthPagerAdapter(this);
+        monthViewPager.setAdapter(monthPagerAdapter);
+
+        // Устанавливаем начальную позицию (для бесконечного скролла)
+        monthViewPager.setCurrentItem(MonthPagerAdapter.INITIAL_POSITION, false);
+
+        // Добавляем анимацию перелистывания страниц
+        monthViewPager.setPageTransformer(new DepthPageTransformer());
+
+        // Обработчик изменения страницы (для обновления даты в заголовке)
+        monthViewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
-            // Этот метод вызывается для определения формы элемента
-            public void getOutline(View view, Outline outline) {
-                // Создаем закругленный прямоугольник в качестве формы:
-                // Параметры:
-                // 1. Левый край (0)
-                // 2. Верхний край (0)
-                // 3. Правый край (текущая ширина view)
-                // 4. Нижний край (текущая высота view)
-                // 5. Радиус скругления углов (32 пикселя)
-                outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), 320f);
+            public void onPageSelected(int position) {
+                updateDateText(position);
             }
         });
 
-// Включаем обрезку содержимого по установленной форме
-// Это означает, что все, что выходит за границы outline, будет обрезано
-        btn.setClipToOutline(true);
+        // Оптимизация анимации и скролла
+        monthViewPager.post(() -> {
+            RecyclerView recyclerView = (RecyclerView) monthViewPager.getChildAt(0);
+            recyclerView.setItemAnimator(null);  // Отключаем анимацию элементов
+            recyclerView.setLayoutFrozen(false);  // Разрешаем изменение layout
+            // Устанавливаем параметры скролла
+            recyclerView.setScrollingTouchSlop(RecyclerView.TOUCH_SLOP_PAGING);
+        });
+    }
+
+    /**
+     * Обновление текстовых полей с датой при перелистывании месяцев
+     * @param position Текущая позиция во ViewPager
+     */
+    private void updateDateText(int position) {
+        // Вычисляем смещение от текущего месяца
+        int monthOffset = position - MonthPagerAdapter.INITIAL_POSITION;
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.MONTH, monthOffset);
+
+        // Обновляем текстовые поля
+        yearText.setText(String.valueOf(calendar.get(Calendar.YEAR)));
+        monthText.setText(String.format(".%02d", calendar.get(Calendar.MONTH) + 1));
+        dayText.setText(String.format(".%02d", calendar.get(Calendar.DAY_OF_MONTH)));
+
+        // Если день не был выбран вручную, показываем текущий день
+        if (dayText.getText().toString().isEmpty()) {
+            dayText.setText(String.format(".%02d", calendar.get(Calendar.DAY_OF_MONTH)));
+        }
+    }
+
+    /**
+     * Настройка кнопки аккаунта (закругление и обработчик клика)
+     * Требует API Level 21+ для ViewOutlineProvider
+     */
+    @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
+    private void setupAccountButton() {
+        ImageButton accountButton = findViewById(R.id.Account_Button);
+
+        // Создаем закругленные края для кнопки
+        accountButton.setOutlineProvider(new ViewOutlineProvider() {
+            @Override
+            public void getOutline(View view, Outline outline) {
+                // Устанавливаем закругленный прямоугольник с радиусом 32f
+                outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), 32f);
+            }
+        });
+        accountButton.setClipToOutline(true);  // Включаем обрезку по контуру
+
+        // Обработчики кликов
+        accountButton.setOnClickListener(v -> openAccount());
+        findViewById(R.id.imageButton).setOnClickListener(v -> addEvent());
+    }
+
+    /**
+     * Открытие экрана аккаунта (заглушка)
+     */
+    private void openAccount() {
+        // TODO: Реализовать открытие экрана аккаунта
+    }
+
+    /**
+     * Добавление нового события (заглушка)
+     */
+    private void addEvent() {
+        // TODO: Реализовать добавление события
+    }
+}
+
+/**
+ * Класс для анимации перелистывания страниц в ViewPager2
+ * Создает эффект "глубины" при перелистывании
+ */
+class DepthPageTransformer implements ViewPager2.PageTransformer {
+    private static final float MIN_SCALE = 0.75f;  // Минимальный масштаб страницы
+
+    @Override
+    public void transformPage(View view, float position) {
+        int pageWidth = view.getWidth();
+
+        if (position < -1) { // Страница слева от видимой области
+            view.setAlpha(0f);
+        } else if (position <= 0) { // Страница уходит влево
+            view.setAlpha(1f);
+            view.setTranslationX(0f);
+            view.setScaleX(1f);
+            view.setScaleY(1f);
+        } else if (position <= 1) { // Страница появляется справа
+            view.setAlpha(1 - position);  // Прозрачность
+            view.setTranslationX(pageWidth * -position);  // Смещение
+            // Масштабирование
+            float scaleFactor = MIN_SCALE + (1 - MIN_SCALE) * (1 - Math.abs(position));
+            view.setScaleX(scaleFactor);
+            view.setScaleY(scaleFactor);
+        } else { // Страница справа от видимой области
+            view.setAlpha(0f);
+        }
     }
 }
