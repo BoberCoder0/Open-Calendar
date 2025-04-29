@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Базовая тема приложения -->
+    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <!-- Белый статус-бар -->
+        <item name="android:statusBarColor">@android:color/white</item>
+        <!-- Черные иконки в статус-баре -->
+        <item name="android:windowLightStatusBar">true</item>
+    </style>
+</resources>
