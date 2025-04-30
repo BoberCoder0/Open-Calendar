@@ -1,7 +1,6 @@
 package com.example.opencalendar;
 
 import android.view.View;
-
 import androidx.annotation.NonNull;
 import androidx.viewpager2.widget.ViewPager2;
 

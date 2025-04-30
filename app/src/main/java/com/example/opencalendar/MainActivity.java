@@ -14,28 +14,19 @@ import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 import java.util.Calendar;
 
-
 /**
- * Главная Activity приложения, реализующая календарь с возможностью
- * перелистывания месяцев и отображения событий
+ * Основная Activity приложения, реализующая интерфейс календаря
+ * Управляет навигацией между месяцами и согласованным выделением дней
  */
 public class MainActivity extends AppCompatActivity {
-    // UI элементы
-    private ViewPager2 monthViewPager;  // Для горизонтального перелистывания месяцев
-    private MonthPagerAdapter monthPagerAdapter;  // Адаптер для ViewPager2
-    private TextView yearText, monthText, dayText;  // Текстовые поля для отображения даты
+    private ViewPager2 monthViewPager;
+    private MonthPagerAdapter monthPagerAdapter;
+    private int selectedDay = -1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        // Сделать статус бар белым с темными иконками
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            getWindow().getDecorView().setSystemUiVisibility(
-                    View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR
-            );
-        }
 
         // Инициализация всех компонентов
         initViews();
@@ -43,71 +34,72 @@ public class MainActivity extends AppCompatActivity {
         setupAccountButton();
 
         // Установка текущей даты при запуске
-        Calendar today = Calendar.getInstance();
-        Button goTodayButton = findViewById(R.id.GoTodayButton);
-        goTodayButton.setText(String.valueOf(today.get(Calendar.DAY_OF_MONTH)));
-
+        initializeTodayButton();
         updateDateText(MonthPagerAdapter.INITIAL_POSITION);
 
         // Подписываемся на события выбора даты
-        getSupportFragmentManager().setFragmentResultListener("dateSelected", this, (requestKey, result) -> {
-            int year = result.getInt("year");
-            int month = result.getInt("month");
-            int day = result.getInt("day");
+        getSupportFragmentManager().setFragmentResultListener("dateSelected", this,
+                (requestKey, result) -> {
+                    int year = result.getInt("year");
+                    int month = result.getInt("month");
+                    int day = result.getInt("day");
 
-            // Обновляем верхнюю панель
-            yearText.setText(String.valueOf(year));
-            monthText.setText(String.format(".%02d", month + 1));
-            dayText.setText(String.format(".%02d", day));
-        });
+                    // Обновляем верхнюю панель
+                    TextView yearText = findViewById(R.id.YearText);
+                    TextView monthText = findViewById(R.id.MonthText);
+                    TextView dayText = findViewById(R.id.DayText);
 
+                    yearText.setText(String.valueOf(year));
+                    monthText.setText(String.format(".%02d", month + 1));
+                    dayText.setText(String.format(".%02d", day));
+                });
     }
 
     /**
      * Инициализация всех View элементов
      */
     private void initViews() {
-        yearText = findViewById(R.id.YearText);  // Поле года (например: 2023)
-        monthText = findViewById(R.id.MonthText);  // Поле месяца (например: .04)
-        dayText = findViewById(R.id.DayText);  // Поле дня (например: .27)
-
-        monthViewPager = findViewById(R.id.monthViewPager);  // ViewPager для месяцев
-
         Button goTodayButton = findViewById(R.id.GoTodayButton);
         goTodayButton.setOnClickListener(v -> goToToday());
     }
 
-    // Новый метод для перехода к текущей дате
-    private void goToToday() {
-        // Устанавливаем текущую дату в кнопке
+    /**
+     * Инициализация с сегодняшним днём при запуске
+     */
+    private void initializeTodayButton() {
         Calendar today = Calendar.getInstance();
+        selectedDay = today.get(Calendar.DAY_OF_MONTH);
         Button goTodayButton = findViewById(R.id.GoTodayButton);
-        goTodayButton.setText(String.valueOf(today.get(Calendar.DAY_OF_MONTH)));
+        goTodayButton.setText(String.valueOf(selectedDay));
+        monthPagerAdapter.setSelectedDay(selectedDay);
+    }
 
-        // Вычисляем позицию для текущего месяца
-        int currentPosition = MonthPagerAdapter.INITIAL_POSITION;
-        monthViewPager.setCurrentItem(currentPosition, true);
+    /**
+     * Переход к текущему месяцу и выделение сегодняшнего дня
+     */
+    private void goToToday() {
+        Calendar today = Calendar.getInstance();
+        selectedDay = today.get(Calendar.DAY_OF_MONTH);
+        Button goTodayButton = findViewById(R.id.GoTodayButton);
+        goTodayButton.setText(String.valueOf(selectedDay));
 
-        // Обновляем отображение даты
-        updateDateText(currentPosition);
+        monthPagerAdapter.setSelectedDay(selectedDay);
+        monthViewPager.setCurrentItem(MonthPagerAdapter.INITIAL_POSITION, true);
     }
 
     /**
      * Настройка ViewPager для перелистывания месяцев
      */
     private void setupMonthPager() {
-        // Создаем адаптер, который будет создавать фрагменты месяцев
         monthPagerAdapter = new MonthPagerAdapter(this);
+        monthViewPager = findViewById(R.id.monthViewPager);
         monthViewPager.setAdapter(monthPagerAdapter);
 
         // Устанавливаем начальную позицию (для бесконечного скролла)
         monthViewPager.setCurrentItem(MonthPagerAdapter.INITIAL_POSITION, false);
 
-        //Замените DepthPageTransformer на новый:
+        // Добавляем анимацию перелистывания страниц
         monthViewPager.setPageTransformer(new SlidePageTransformer());
-
-        /*// Добавляем анимацию перелистывания страниц
-        monthViewPager.setPageTransformer(new DepthPageTransformer());*/
 
         // Обработчик изменения страницы (для обновления даты в заголовке)
         monthViewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
@@ -138,14 +130,13 @@ public class MainActivity extends AppCompatActivity {
         calendar.add(Calendar.MONTH, monthOffset);
 
         // Обновляем текстовые поля
+        TextView yearText = findViewById(R.id.YearText);
+        TextView monthText = findViewById(R.id.MonthText);
+        TextView dayText = findViewById(R.id.DayText);
+
         yearText.setText(String.valueOf(calendar.get(Calendar.YEAR)));
         monthText.setText(String.format(".%02d", calendar.get(Calendar.MONTH) + 1));
         dayText.setText(String.format(".%02d", calendar.get(Calendar.DAY_OF_MONTH)));
-
-        // Если день не был выбран вручную, показываем текущий день
-        if (dayText.getText().toString().isEmpty()) {
-            dayText.setText(String.format(".%02d", calendar.get(Calendar.DAY_OF_MONTH)));
-        }
     }
 
     /**
@@ -155,7 +146,6 @@ public class MainActivity extends AppCompatActivity {
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void setupAccountButton() {
         ImageButton accountButton = findViewById(R.id.Account_Button);
-
         // Создаем закругленные края для кнопки
         accountButton.setOutlineProvider(new ViewOutlineProvider() {
             @Override
@@ -185,37 +175,3 @@ public class MainActivity extends AppCompatActivity {
         // TODO: Реализовать добавление события
     }
 }
-
-
-
-/**
- * Класс для анимации перелистывания страниц в ViewPager2
- * Создает эффект "глубины" при перелистывании
- */
-/*
-class DepthPageTransformer implements ViewPager2.PageTransformer {
-    private static final float MIN_SCALE = 0.75f;  // Минимальный масштаб страницы
-
-    @Override
-    public void transformPage(View view, float position) {
-        int pageWidth = view.getWidth();
-
-        if (position < -1) { // Страница слева от видимой области
-            view.setAlpha(0f);
-        } else if (position <= 0) { // Страница уходит влево
-            view.setAlpha(1f);
-            view.setTranslationX(0f);
-            view.setScaleX(1f);
-            view.setScaleY(1f);
-        } else if (position <= 1) { // Страница появляется справа
-            view.setAlpha(1 - position);  // Прозрачность
-            view.setTranslationX(pageWidth * -position);  // Смещение
-            // Масштабирование
-            float scaleFactor = MIN_SCALE + (1 - MIN_SCALE) * (1 - Math.abs(position));
-            view.setScaleX(scaleFactor);
-            view.setScaleY(scaleFactor);
-        } else { // Страница справа от видимой области
-            view.setAlpha(0f);
-        }
-    }
-}*/
