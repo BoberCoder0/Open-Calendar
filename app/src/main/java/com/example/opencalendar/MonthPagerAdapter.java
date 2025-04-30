@@ -10,7 +10,7 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 import com.example.opencalendar.MonthFragment;
 
 public class MonthPagerAdapter extends FragmentStateAdapter {
-    public static final int INITIAL_POSITION = Integer.MAX_VALUE / 2;
+    //public static final int INITIAL_POSITION = Integer.MAX_VALUE / 2;
 
     public MonthPagerAdapter(@NonNull FragmentActivity fragmentActivity) {
         super(fragmentActivity);
@@ -25,8 +25,12 @@ public class MonthPagerAdapter extends FragmentStateAdapter {
         return fragment;
     }
 
+    private static final int MAX_ITEMS = 1000; // Вместо Integer.MAX_VALUE
+    public static final int INITIAL_POSITION = MAX_ITEMS / 2;
+
     @Override
     public int getItemCount() {
-        return Integer.MAX_VALUE;
+        //return Integer.MAX_VALUE;
+        return 12; // Должно быть 12 месяцев
     }
 }

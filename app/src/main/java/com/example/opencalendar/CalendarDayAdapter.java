@@ -24,6 +24,8 @@ import androidx.core.content.ContextCompat;
 public class CalendarDayAdapter extends ArrayAdapter<String> {
 
     private int currentDay = -1;// Текущий день месяца, который нужно выделить (-1 - нет выделения)
+    private Context context; // Добавьте это поле
+
     private int selectedDay = -1; // Добавляем переменную для хранения выбранного дня
     private int highlightColor = Color.parseColor("#FF4285F4"); // Голубой цвет для выделения
     private int selectedColor = Color.parseColor("#FF00FF00"); // Цвет для выделения выбранного
@@ -37,6 +39,7 @@ public class CalendarDayAdapter extends ArrayAdapter<String> {
      */
     public CalendarDayAdapter(@NonNull Context context, List<String> days, int currentDay) {
         super(context, 0, days);
+        this.context = context; // Инициализируйте поле
         this.currentDay = currentDay;
     }
 
@@ -91,55 +94,84 @@ public class CalendarDayAdapter extends ArrayAdapter<String> {
         return convertView;
     }*/
 
-    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+//    public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
+//        if (convertView == null) {
+//            convertView = LayoutInflater.from(getContext())
+//                    .inflate(R.layout.item_day, parent, false);
+//        }
+//
+//        String day = getItem(position);
+//        TextView dayText = convertView.findViewById(R.id.dayText);
+//        dayText.setText(day);
+//
+//        // Всегда устанавливаем базовую границу
+//        dayText.setBackgroundResource(R.drawable.day_cell_background);
+//        dayText.setTextColor(Color.BLACK);
+//
+//        /*// Сброс стилей
+//        dayText.setBackgroundResource(0);
+//        dayText.setTextColor(Color.BLACK);*/
+//
+//        if (day.isEmpty()) {
+//            dayText.setVisibility(View.INVISIBLE);
+//            return convertView;
+//        }
+//
+//        dayText.setVisibility(View.VISIBLE);
+//
+//        // Для выделенных дней создаем LayerDrawable, чтобы сохранить границу
+//        if ((currentDay != -1 && day.equals(String.valueOf(currentDay)))) {
+//            LayerDrawable layers = new LayerDrawable(new Drawable[]{
+//                    ContextCompat.getDrawable(getContext(), R.drawable.today_bg),
+//                    ContextCompat.getDrawable(getContext(), R.drawable.today_bg)
+//            });
+//            layers.setLayerInset(1, 2, 2, 2, 2); // Отступы для цветного фона
+//            dayText.setBackground(layers);
+//            dayText.setTextColor(Color.WHITE);
+//        }
+//
+//        // Выделение сегодняшнего дня
+//        /*if (currentDay != -1 && day.equals(String.valueOf(currentDay))) {
+//            dayText.setBackgroundResource(R.drawable.today_bg);
+//            dayText.setTextColor(Color.WHITE);
+//        }*/
+//
+//        // Выделение выбранного дня
+//        if (selectedDay != -1 && day.equals(String.valueOf(selectedDay))) {
+//            dayText.setBackgroundResource(R.drawable.selected_bg);
+//            dayText.setTextColor(Color.WHITE);
+//        }
+//
+//        return convertView;
+//    }
+
+    public View getView(int position, View convertView, ViewGroup parent) {
+        ViewHolder holder;
         if (convertView == null) {
-            convertView = LayoutInflater.from(getContext())
-                    .inflate(R.layout.item_day, parent, false);
+            // Используйте this.context вместо context
+            convertView = LayoutInflater.from(this.context).inflate(R.layout.item_day, parent, false);
+            holder = new ViewHolder();
+            holder.dayText = convertView.findViewById(R.id.dayText);
+            convertView.setTag(holder);
+        } else {
+            holder = (ViewHolder) convertView.getTag();
         }
 
         String day = getItem(position);
-        TextView dayText = convertView.findViewById(R.id.dayText);
-        dayText.setText(day);
+        holder.dayText.setText(day);
 
-        // Всегда устанавливаем базовую границу
-        dayText.setBackgroundResource(R.drawable.day_cell_background);
-        dayText.setTextColor(Color.BLACK);
-
-        /*// Сброс стилей
-        dayText.setBackgroundResource(0);
-        dayText.setTextColor(Color.BLACK);*/
-
-        if (day.isEmpty()) {
-            dayText.setVisibility(View.INVISIBLE);
-            return convertView;
-        }
-
-        dayText.setVisibility(View.VISIBLE);
-
-        // Для выделенных дней создаем LayerDrawable, чтобы сохранить границу
-        if ((currentDay != -1 && day.equals(String.valueOf(currentDay)))) {
-            LayerDrawable layers = new LayerDrawable(new Drawable[]{
-                    ContextCompat.getDrawable(getContext(), R.drawable.today_bg),
-                    ContextCompat.getDrawable(getContext(), R.drawable.today_bg)
-            });
-            layers.setLayerInset(1, 2, 2, 2, 2); // Отступы для цветного фона
-            dayText.setBackground(layers);
-            dayText.setTextColor(Color.WHITE);
-        }
-
-        // Выделение сегодняшнего дня
-        /*if (currentDay != -1 && day.equals(String.valueOf(currentDay))) {
-            dayText.setBackgroundResource(R.drawable.today_bg);
-            dayText.setTextColor(Color.WHITE);
-        }*/
-
-        // Выделение выбранного дня
-        if (selectedDay != -1 && day.equals(String.valueOf(selectedDay))) {
-            dayText.setBackgroundResource(R.drawable.selected_bg);
-            dayText.setTextColor(Color.WHITE);
+        // Упрощенная логика выделения
+        if (day.equals(String.valueOf(currentDay))) {
+            holder.dayText.setBackgroundResource(R.drawable.today_bg);
+        } else {
+            holder.dayText.setBackgroundResource(R.drawable.day_cell_background);
         }
 
         return convertView;
+    }
+
+    static class ViewHolder {
+        TextView dayText;
     }
 
     /**

@@ -120,7 +120,7 @@ public class MonthFragment extends Fragment {
      * @param calendar Календарь с установленным нужным месяцем
      * @return Список строк с днями (пустые строки для выравнивания)
      */
-    private List<String> generateDaysForMonth(Calendar calendar) {
+    /*private List<String> generateDaysForMonth(Calendar calendar) {
         List<String> days = new ArrayList<>();
 
         // 1. Получаем количество дней в текущем месяце
@@ -158,6 +158,19 @@ public class MonthFragment extends Fragment {
         // 8. Логирование для отладки
         Log.d("Calendar", "Generated days: " + days.size() + ", starts with: " + (days.size() > 0 ? days.get(0) : "empty"));
 
+        return days;
+    }*/
+
+    private List<String> generateDaysForMonth(Calendar calendar) {
+        List<String> days = new ArrayList<>();
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+        int firstDayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+        int offset = (firstDayOfWeek - Calendar.MONDAY + 7) % 7; // Исправленная логика смещения
+
+        for (int i = 0; i < offset; i++) days.add("");
+        for (int i = 1; i <= calendar.getActualMaximum(Calendar.DAY_OF_MONTH); i++) {
+            days.add(String.valueOf(i));
+        }
         return days;
     }
 
