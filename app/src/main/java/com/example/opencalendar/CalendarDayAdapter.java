@@ -1,3 +1,4 @@
+// CalendarDayAdapter.java
 package com.example.opencalendar;
 
 import android.content.Context;
@@ -13,20 +14,16 @@ import androidx.core.content.ContextCompat;
 import java.util.List;
 
 /**
- * Адаптер для отображения дней месяца в календаре
- * Реализует оптимизацию производительности и согласованное выделение дней
+ * Адаптер для отображения дней в GridView календаря.
+ * Обрабатывает выделение текущего и выбранного дней.
  */
 public class CalendarDayAdapter extends ArrayAdapter<String> {
-    private int currentDay = -1; // Сегодняшний день месяца (-1 - не выделять)
-    private int selectedDay = -1; // Выбранный пользователем день (-1 - не выделять)
-    private Context context;
+    private int currentDay = -1; // Сегодняшний день (если отображается текущий месяц)
+    private int selectedDay = -1; // Выбранный пользователем день
+    private Context context; // Контекст приложения
 
     /**
-     * Создаёт новый экземпляр адаптера
-     * @param context Контекст приложения
-     * @param days Список дней для отображения
-     * @param currentDay Номер сегодняшнего дня
-     * @param selectedDay Номер выбранного пользователем дня
+     * Конструктор адаптера
      */
     public CalendarDayAdapter(@NonNull Context context, List<String> days, int currentDay, int selectedDay) {
         super(context, 0, days);
@@ -38,7 +35,7 @@ public class CalendarDayAdapter extends ArrayAdapter<String> {
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        // Оптимизация: переиспользуем существующие view
+        // Оптимизация: переиспользование View
         if (convertView == null) {
             convertView = LayoutInflater.from(context)
                     .inflate(R.layout.item_day, parent, false);
@@ -52,7 +49,7 @@ public class CalendarDayAdapter extends ArrayAdapter<String> {
         dayText.setBackgroundResource(R.drawable.day_cell_background);
         dayText.setTextColor(Color.BLACK);
 
-        // Скрываем пустые ячейки (для формирования сетки календаря)
+        // Скрытие пустых ячеек (для выравнивания)
         if (day.isEmpty()) {
             dayText.setVisibility(View.INVISIBLE);
             return convertView;
@@ -61,9 +58,7 @@ public class CalendarDayAdapter extends ArrayAdapter<String> {
         dayText.setVisibility(View.VISIBLE);
         int dayInt = Integer.parseInt(day);
 
-        // Логика выделения дней:
-        // 1. Если день выбран пользователем - применяем стиль выбранного
-        // 2. Если это сегодняшний день - применяем стиль сегодняшнего
+        // Выделение выбранного или текущего дня
         if (dayInt == selectedDay) {
             highlightSelected(dayText);
         } else if (dayInt == currentDay) {
@@ -74,7 +69,7 @@ public class CalendarDayAdapter extends ArrayAdapter<String> {
     }
 
     /**
-     * Применяет стиль выделения для выбранного дня
+     * Применяет стиль для выбранного дня
      */
     private void highlightSelected(TextView dayText) {
         dayText.setBackgroundResource(R.drawable.selected_bg);
@@ -82,7 +77,7 @@ public class CalendarDayAdapter extends ArrayAdapter<String> {
     }
 
     /**
-     * Применяет стиль выделения для сегодняшнего дня
+     * Применяет стиль для сегодняшнего дня
      */
     private void highlightToday(TextView dayText) {
         dayText.setBackgroundResource(R.drawable.today_bg);
@@ -90,7 +85,7 @@ public class CalendarDayAdapter extends ArrayAdapter<String> {
     }
 
     /**
-     * Обновляет выбранный день и перерисовывает календарь
+     * Устанавливает выбранный день и обновляет отображение
      */
     public void setSelectedDay(int day) {
         this.selectedDay = day;
@@ -98,7 +93,7 @@ public class CalendarDayAdapter extends ArrayAdapter<String> {
     }
 
     /**
-     * Обновляет текущий день и перерисовывает календарь
+     * Устанавливает текущий день и обновляет отображение
      */
     public void setCurrentDay(int day) {
         this.currentDay = day;

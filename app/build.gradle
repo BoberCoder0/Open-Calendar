@@ -39,6 +39,13 @@ android {
 
         // Для аппаратного ускорения используйте manifestPlaceholders
         manifestPlaceholders = [androidHardwareAccelerated: "true"]
+
+        javaCompileOptions {
+            annotationProcessorOptions {
+                arguments += ["room.schemaLocation": "$projectDir/schemas".toString()]
+            }
+        }
+
     }
 
     buildTypes {
@@ -61,8 +68,19 @@ dependencies {
     implementation libs.material
     implementation libs.activity
     implementation libs.constraintlayout
-    implementation 'androidx.viewpager2:viewpager2:1.0.0'
+    implementation libs.databinding.adapters
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
+    // Room components
+    implementation "androidx.room:room-runtime:2.6.1"
+    annotationProcessor "androidx.room:room-compiler:2.6.1"
+
+    // ViewPager2
+    implementation 'androidx.viewpager2:viewpager2:1.1.0'
+
+    // Lifecycle components (добавлено для лучшей работы с Room)
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.2"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:2.6.2"
+    implementation "androidx.lifecycle:lifecycle-common-java8:2.6.2"
 }

@@ -1,50 +1,74 @@
+// MainActivity.java
 package com.example.opencalendar;
 
+// Импорты необходимых библиотек
+import android.app.DatePickerDialog;
 import android.graphics.Outline;
 import android.os.Build;
 import android.os.Bundle;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewOutlineProvider;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.widget.NestedScrollView;
+import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
+
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 /**
- * Основная Activity приложения, реализующая интерфейс календаря
- * Управляет навигацией между месяцами и согласованным выделением дней
+ * Главная активность приложения, содержащая:
+ * - ViewPager2 для перелистывания месяцев
+ * - RecyclerView для отображения целей
+ * - Кнопки управления и элементы интерфейса
  */
 public class MainActivity extends AppCompatActivity {
-    private ViewPager2 monthViewPager;
-    private MonthPagerAdapter monthPagerAdapter;
-    private int selectedDay = -1;
+    // Поля класса
+    private ViewPager2 monthViewPager; // Для горизонтального пролистывания месяцев
+    private MonthPagerAdapter monthPagerAdapter; // Адаптер для ViewPager
+    private int selectedDay = -1; // Текущий выбранный день (-1 означает отсутствие выбора)
+    private NestedScrollView nestedScrollView; // Основной контейнер с прокруткой
+    private RecyclerView goalsRecyclerView; // Список целей
+    private GoalsAdapter goalsAdapter; // Адаптер для списка целей
+    private AppDatabase database; // База данных Room
+    private GoalDao goalDao; // DAO для работы с целями
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main); // Установка макета
 
-        // Инициализация всех компонентов
+        // Инициализация компонентов
         initViews();
         setupMonthPager();
         setupAccountButton();
-
-        // Установка текущей даты при запуске
         initializeTodayButton();
         updateDateText(MonthPagerAdapter.INITIAL_POSITION);
 
-        // Подписываемся на события выбора даты
+        // Работа с базой данных
+        database = AppDatabaseHelper.getInstance(this);
+        goalDao = database.goalDao();
+
+        // Обработчик кнопки добавления цели
+        findViewById(R.id.imageButton).setOnClickListener(v -> showAddGoalDialog());
+
+        // Слушатель выбора даты из фрагмента
         getSupportFragmentManager().setFragmentResultListener("dateSelected", this,
                 (requestKey, result) -> {
+                    // Обновление текстовых полей при выборе даты
                     int year = result.getInt("year");
                     int month = result.getInt("month");
                     int day = result.getInt("day");
 
-                    // Обновляем верхнюю панель
                     TextView yearText = findViewById(R.id.YearText);
                     TextView monthText = findViewById(R.id.MonthText);
                     TextView dayText = findViewById(R.id.DayText);
@@ -56,15 +80,84 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Инициализация всех View элементов
+     * Показывает диалог для добавления новой цели
      */
-    private void initViews() {
-        Button goTodayButton = findViewById(R.id.GoTodayButton);
-        goTodayButton.setOnClickListener(v -> goToToday());
+    private void showAddGoalDialog() {
+        // Создание и настройка диалогового окна
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_add_goal, null);
+
+        // Получение ссылок на элементы диалога
+        EditText titleInput = dialogView.findViewById(R.id.titleInput);
+        EditText descInput = dialogView.findViewById(R.id.descInput);
+        Button dateButton = dialogView.findViewById(R.id.dateButton);
+
+        Calendar selectedDate = Calendar.getInstance(); // Дата по умолчанию - текущая
+
+        // Обработчик выбора даты
+        dateButton.setOnClickListener(v -> {
+            new DatePickerDialog(this, (view, year, month, day) -> {
+                selectedDate.set(year, month, day);
+                dateButton.setText(String.format("%d.%d.%d", day, month + 1, year));
+            },
+                    selectedDate.get(Calendar.YEAR),
+                    selectedDate.get(Calendar.MONTH),
+                    selectedDate.get(Calendar.DAY_OF_MONTH))
+                    .show();
+        });
+
+        // Настройка кнопок диалога
+        builder.setView(dialogView)
+                .setPositiveButton("Сохранить", (dialog, which) -> {
+                    // Создание новой цели
+                    Goal goal = new Goal();
+                    goal.setTitle(titleInput.getText().toString());
+                    goal.setDescription(descInput.getText().toString());
+                    goal.setTargetDate(selectedDate);
+
+                    // Сохранение в БД в фоновом потоке
+                    new Thread(() -> {
+                        goalDao.insert(goal);
+                        runOnUiThread(() -> {
+                            // Обновление списка на UI
+                            goalsAdapter.updateList(goalDao.getAllGoals());
+                        });
+                    }).start();
+                })
+                .setNegativeButton("Отмена", null)
+                .show();
     }
 
     /**
-     * Инициализация с сегодняшним днём при запуске
+     * Инициализация View элементов
+     */
+    private void initViews() {
+        // Кнопка перехода на сегодня
+        Button goTodayButton = findViewById(R.id.GoTodayButton);
+        goTodayButton.setOnClickListener(v -> goToToday());
+
+        // Настройка RecyclerView для целей
+        goalsRecyclerView = findViewById(R.id.goalsRecyclerView);
+        goalsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        goalsAdapter = new GoalsAdapter(new ArrayList<>(), this);
+        goalsRecyclerView.setAdapter(goalsAdapter);
+
+        // Обработчик прокрутки для скрытия/показа ViewPager
+        nestedScrollView = findViewById(R.id.main);
+        nestedScrollView.setOnScrollChangeListener(
+                (NestedScrollView.OnScrollChangeListener)
+                        (v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
+                            if (scrollY > monthViewPager.getHeight()) {
+                                monthViewPager.setVisibility(View.GONE);
+                            } else {
+                                monthViewPager.setVisibility(View.VISIBLE);
+                            }
+                        }
+        );
+    }
+
+    /**
+     * Устанавливает текущий день на кнопке "Сегодня"
      */
     private void initializeTodayButton() {
         Calendar today = Calendar.getInstance();
@@ -75,7 +168,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Переход к текущему месяцу и выделение сегодняшнего дня
+     * Переход к текущему дню
      */
     private void goToToday() {
         Calendar today = Calendar.getInstance();
@@ -88,20 +181,17 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Настройка ViewPager для перелистывания месяцев
+     * Настройка ViewPager для месяцев
      */
     private void setupMonthPager() {
         monthPagerAdapter = new MonthPagerAdapter(this);
         monthViewPager = findViewById(R.id.monthViewPager);
         monthViewPager.setAdapter(monthPagerAdapter);
 
-        // Устанавливаем начальную позицию (для бесконечного скролла)
         monthViewPager.setCurrentItem(MonthPagerAdapter.INITIAL_POSITION, false);
-
-        // Добавляем анимацию перелистывания страниц
         monthViewPager.setPageTransformer(new SlidePageTransformer());
 
-        // Обработчик изменения страницы (для обновления даты в заголовке)
+        // Слушатель изменения страницы
         monthViewPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             @Override
             public void onPageSelected(int position) {
@@ -109,27 +199,24 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        // Оптимизация анимации и скролла
+        // Оптимизация RecyclerView внутри ViewPager2
         monthViewPager.post(() -> {
             RecyclerView recyclerView = (RecyclerView) monthViewPager.getChildAt(0);
-            recyclerView.setItemAnimator(null);  // Отключаем анимацию элементов
-            recyclerView.setLayoutFrozen(false);  // Разрешаем изменение layout
-            // Устанавливаем параметры скролла
+            recyclerView.setItemAnimator(null);
+            recyclerView.setLayoutFrozen(false);
             recyclerView.setScrollingTouchSlop(RecyclerView.TOUCH_SLOP_PAGING);
         });
     }
 
     /**
-     * Обновление текстовых полей с датой при перелистывании месяцев
-     * @param position Текущая позиция во ViewPager
+     * Обновление отображаемой даты при перелистывании
      */
     private void updateDateText(int position) {
-        // Вычисляем смещение от текущего месяца
         int monthOffset = position - MonthPagerAdapter.INITIAL_POSITION;
         Calendar calendar = Calendar.getInstance();
         calendar.add(Calendar.MONTH, monthOffset);
 
-        // Обновляем текстовые поля
+        // Обновление текстовых полей
         TextView yearText = findViewById(R.id.YearText);
         TextView monthText = findViewById(R.id.MonthText);
         TextView dayText = findViewById(R.id.DayText);
@@ -140,23 +227,19 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Настройка кнопки аккаунта (закругление и обработчик клика)
-     * Требует API Level 21+ для ViewOutlineProvider
+     * Настройка кнопки аккаунта (скругление изображения)
      */
     @RequiresApi(api = Build.VERSION_CODES.LOLLIPOP)
     private void setupAccountButton() {
         ImageButton accountButton = findViewById(R.id.Account_Button);
-        // Создаем закругленные края для кнопки
         accountButton.setOutlineProvider(new ViewOutlineProvider() {
             @Override
             public void getOutline(View view, Outline outline) {
-                // Устанавливаем закругленный прямоугольник с радиусом 32f
                 outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), 32f);
             }
         });
-        accountButton.setClipToOutline(true);  // Включаем обрезку по контуру
+        accountButton.setClipToOutline(true);
 
-        // Обработчики кликов
         accountButton.setOnClickListener(v -> openAccount());
         findViewById(R.id.imageButton).setOnClickListener(v -> addEvent());
     }
@@ -169,7 +252,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     /**
-     * Добавление нового события (заглушка)
+     * Добавление события (заглушка)
      */
     private void addEvent() {
         // TODO: Реализовать добавление события
