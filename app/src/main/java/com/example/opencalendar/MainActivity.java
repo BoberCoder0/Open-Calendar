@@ -206,6 +206,12 @@ public class MainActivity extends AppCompatActivity {
             recyclerView.setLayoutFrozen(false);
             recyclerView.setScrollingTouchSlop(RecyclerView.TOUCH_SLOP_PAGING);
         });
+
+        // Добавьте это для кэширования страниц
+        monthViewPager.setOffscreenPageLimit(1);
+        // Отключите overScroll mode
+        monthViewPager.getChildAt(0).setOverScrollMode(View.OVER_SCROLL_NEVER);
+
     }
 
     /**
