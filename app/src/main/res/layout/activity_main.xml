@@ -1,40 +1,65 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:theme="@style/AppTheme"
-    tools:context=".MainActivity"
     android:layout_marginTop="0dp"
-    >
+    android:theme="@style/AppTheme"
+    tools:context=".MainActivity">
 
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/mainScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="50dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="0dp">
+
+            <!-- ViewPager для месяцев -->
+
+            <!-- RecyclerView для целей -->
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/monthViewPager"
+                android:layout_width="match_parent"
+                android:layout_height="360dp" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/goalsRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+    <FrameLayout
+        android:id="@+id/frameLayout"
+        android:layout_width="393dp"
+        android:layout_height="314dp"
+        android:layout_marginTop="360dp"
+        app:layout_constraintTop_toBottomOf="@+id/toolbar">
+
+    </FrameLayout>
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
-        android:layout_width="412dp"
-        android:layout_height="54dp"
+        android:layout_width="411dp"
+        android:layout_height="51dp"
         android:background="#0087FF4C"
         android:minHeight="?attr/actionBarSize"
         android:theme="?attr/actionBarTheme"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent" />
-
-    <ImageButton
-        android:id="@+id/Account_Button"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="10dp"
-        android:padding="0dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/kotia"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="@+id/toolbar"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageButton
@@ -52,6 +77,20 @@
         app:layout_constraintStart_toStartOf="@+id/toolbar"
         app:layout_constraintTop_toTopOf="@+id/toolbar"
         app:srcCompat="@drawable/plus2_black" />
+
+    <ImageButton
+        android:id="@+id/Account_Button"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="10dp"
+        android:padding="0dp"
+        android:scaleType="centerCrop"
+        android:src="@drawable/kotia"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/toolbar"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/YearText"
@@ -91,12 +130,17 @@
         app:layout_constraintStart_toEndOf="@+id/MonthText"
         app:layout_constraintTop_toTopOf="@+id/toolbar" />
 
+    <!-- Убрано фиксированное значение, будет устанавливаться программно -->
+
+
+    <!-- Основной контент с прокруткой -->
+
     <Button
         android:id="@+id/GoTodayButton"
         android:layout_width="45dp"
         android:layout_height="40dp"
-        android:layout_marginStart="95dp"
-        android:layout_marginTop="5dp"
+        android:layout_marginStart="92dp"
+        android:layout_marginTop="8dp"
         android:backgroundTint="#00FFFFFF"
         android:padding="0dp"
         android:textColor="@color/today_highlight"
@@ -104,45 +148,6 @@
         android:theme="@style/Base.Theme.OpenCalendar"
         app:layout_constraintStart_toEndOf="@+id/DayText"
         app:layout_constraintTop_toTopOf="parent"
-        tools:text="27" /> <!-- Убрано фиксированное значение, будет устанавливаться программно -->
-
-
-    <!-- Основной контент с прокруткой -->
-    <androidx.core.widget.NestedScrollView
-        android:id="@+id/mainScrollView"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_marginTop="50dp"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        app:layout_constraintTop_toTopOf="parent">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="0dp">
-
-            <!-- ViewPager для месяцев -->
-            <androidx.viewpager2.widget.ViewPager2
-                android:id="@+id/monthViewPager"
-                android:layout_width="wrap_content"
-                android:layout_height="360dp" />
-
-            <!-- RecyclerView для целей -->
-            <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/goalsRecyclerView"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-
-        </LinearLayout>
-    </androidx.core.widget.NestedScrollView>
-
-    <FrameLayout
-        android:id="@+id/frameLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintTop_toTopOf="parent">
-
-    </FrameLayout>
+        tools:text="27" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

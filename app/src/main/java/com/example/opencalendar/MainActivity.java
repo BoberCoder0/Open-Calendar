@@ -6,6 +6,7 @@ import android.app.DatePickerDialog;
 import android.graphics.Outline;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewOutlineProvider;
@@ -47,6 +48,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main); // Установка макета
+
 
         // Убираем заголовок
         if (getSupportActionBar() != null) {
@@ -132,6 +134,8 @@ public class MainActivity extends AppCompatActivity {
                 })
                 .setNegativeButton("Отмена", null)
                 .show();
+
+
     }
 
     /**
@@ -285,5 +289,7 @@ public class MainActivity extends AppCompatActivity {
      */
     private void addEvent() {
         // TODO: Реализовать добавление события
+
     }
+
 }

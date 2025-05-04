@@ -33,7 +33,7 @@ public class MonthPagerAdapter extends FragmentStateAdapter {
     public int getItemCount() {
         int BIG_NUM = 100000000;
         // еще есть Integer.MAX_VALUE
-        return BIG_NUM; // Очень большое число для эффекта бесконечности
+        return Integer.MAX_VALUE; // Очень большое число для эффекта бесконечности
     }
 
     @Override

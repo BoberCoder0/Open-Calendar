@@ -133,7 +133,9 @@ public class MonthFragment extends Fragment {
         return days;
     }*/
 
-    private List<String> generateDaysForMonth(Calendar calendar) {
+    // TODO: сделай что нибудь уже с этой хуетой!
+
+    /*private List<String> generateDaysForMonth(Calendar calendar) {
         List<String> days = new ArrayList<>();
         calendar.set(Calendar.DAY_OF_MONTH, 1);
         int firstDayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
@@ -143,6 +145,29 @@ public class MonthFragment extends Fragment {
         for (int i = 1; i <= calendar.getActualMaximum(Calendar.DAY_OF_MONTH); i++) {
             days.add(String.valueOf(i));
         }
+        return days;
+    }*/
+
+    private List<String> generateDaysForMonth(Calendar calendar) {
+        List<String> days = new ArrayList<>();
+        calendar.set(Calendar.DAY_OF_MONTH, 1);
+
+        // Получаем первый день недели для 1-го числа месяца
+        int firstDayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
+        // Вычисляем смещение относительно понедельника
+        int offset = (firstDayOfWeek - Calendar.MONDAY + 7) % 7;
+
+        // Добавляем пустые строки для выравнивания
+        for (int i = 0; i < offset; i++) {
+            days.add("");
+        }
+
+        // Добавляем дни месяца
+        int daysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
+        for (int i = 1; i <= daysInMonth; i++) {
+            days.add(String.valueOf(i));
+        }
+
         return days;
     }
 }
