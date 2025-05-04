@@ -16,6 +16,7 @@ import android.widget.TextView;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -46,6 +47,11 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main); // Установка макета
+
+        // Убираем заголовок
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayShowTitleEnabled(false);
+        }
 
         // Инициализация компонентов
         initViews();
@@ -132,6 +138,10 @@ public class MainActivity extends AppCompatActivity {
      * Инициализация View элементов
      */
     private void initViews() {
+        // Инициализация тулбара
+        Toolbar toolbar = findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
+
         // Кнопка перехода на сегодня
         Button goTodayButton = findViewById(R.id.GoTodayButton);
         goTodayButton.setOnClickListener(v -> goToToday());
@@ -142,8 +152,8 @@ public class MainActivity extends AppCompatActivity {
         goalsAdapter = new GoalsAdapter(new ArrayList<>(), this);
         goalsRecyclerView.setAdapter(goalsAdapter);
 
-        // Обработчик прокрутки для скрытия/показа ViewPager
-        nestedScrollView = findViewById(R.id.main);
+        // Инициализация NestedScrollView
+        NestedScrollView nestedScrollView = findViewById(R.id.mainScrollView);
         nestedScrollView.setOnScrollChangeListener(
                 (NestedScrollView.OnScrollChangeListener)
                         (v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
@@ -154,6 +164,19 @@ public class MainActivity extends AppCompatActivity {
                             }
                         }
         );
+
+        /*// Обработчик прокрутки для скрытия/показа ViewPager
+        nestedScrollView = findViewById(R.id.main);
+        nestedScrollView.setOnScrollChangeListener(
+                (NestedScrollView.OnScrollChangeListener)
+                        (v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
+                            if (scrollY > monthViewPager.getHeight()) {
+                                monthViewPager.setVisibility(View.GONE);
+                            } else {
+                                monthViewPager.setVisibility(View.VISIBLE);
+                            }
+                        }
+        );*/
     }
 
     /**

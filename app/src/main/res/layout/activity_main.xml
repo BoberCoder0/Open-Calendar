@@ -8,15 +8,9 @@
     android:layout_height="match_parent"
     android:theme="@style/AppTheme"
     tools:context=".MainActivity"
-    app:layout_constraintTop_toBottomOf="@id/monthViewPager"
-    android:layout_marginTop="10dp"
+    android:layout_marginTop="0dp"
     >
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/goalsRecyclerView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        tools:ignore="MissingConstraints" />
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
@@ -27,8 +21,7 @@
         android:theme="?attr/actionBarTheme"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintStart_toStartOf="parent" />
 
     <ImageButton
         android:id="@+id/Account_Button"
@@ -113,50 +106,43 @@
         app:layout_constraintTop_toTopOf="parent"
         tools:text="27" /> <!-- Убрано фиксированное значение, будет устанавливаться программно -->
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar2"
-        android:layout_width="412dp"
-        android:layout_height="23dp"
-        android:background="#006750A4"
-        android:minHeight="?attr/actionBarSize"
-        android:theme="?attr/actionBarTheme"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
-
-
-    <ScrollView
-        android:layout_width="396dp"
-        android:layout_height="337dp"
-        android:layout_marginStart="1dp"
-        android:layout_marginTop="80dp"
-        android:layout_marginEnd="1dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/toolbar">
+    <!-- Основной контент с прокруткой -->
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/mainScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="50dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior"
+        app:layout_constraintTop_toTopOf="parent">
 
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical" />
+            android:orientation="vertical"
+            android:padding="0dp">
 
-    </ScrollView>
+            <!-- ViewPager для месяцев -->
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/monthViewPager"
+                android:layout_width="wrap_content"
+                android:layout_height="360dp" />
+
+            <!-- RecyclerView для целей -->
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/goalsRecyclerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
 
     <FrameLayout
         android:id="@+id/frameLayout"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        app:layout_constraintTop_toTopOf="parent">
 
     </FrameLayout>
-
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/monthViewPager"
-        android:layout_width="0dp"
-        android:layout_height="350dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
