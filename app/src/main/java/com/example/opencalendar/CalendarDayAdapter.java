@@ -1,4 +1,3 @@
-// CalendarDayAdapter.java
 package com.example.opencalendar;
 
 import android.content.Context;
@@ -10,21 +9,14 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
+
 import java.util.List;
 
-/**
- * Адаптер для отображения дней в GridView календаря.
- * Обрабатывает выделение текущего и выбранного дней.
- */
 public class CalendarDayAdapter extends ArrayAdapter<String> {
-    private int currentDay = -1; // Сегодняшний день (если отображается текущий месяц)
-    private int selectedDay = -1; // Выбранный пользователем день
-    private Context context; // Контекст приложения
+    private int currentDay = -1;
+    private int selectedDay = -1;
+    private Context context;
 
-    /**
-     * Конструктор адаптера
-     */
     public CalendarDayAdapter(@NonNull Context context, List<String> days, int currentDay, int selectedDay) {
         super(context, 0, days);
         this.context = context;
@@ -35,66 +27,52 @@ public class CalendarDayAdapter extends ArrayAdapter<String> {
     @NonNull
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
-        // Оптимизация: переиспользование View
+        // 1. Инфлейт или переиспользование view
         if (convertView == null) {
             convertView = LayoutInflater.from(context)
                     .inflate(R.layout.item_day, parent, false);
         }
 
         TextView dayText = convertView.findViewById(R.id.dayText);
-        String day = getItem(position);
-        dayText.setText(day);
+        String dayStr = getItem(position);
+        dayText.setText(dayStr);
 
-        // Базовые стили
-        dayText.setBackgroundResource(R.drawable.day_cell_background);
+        // Сброс стилей
+        dayText.setBackgroundResource(0);
         dayText.setTextColor(Color.BLACK);
 
-        // Скрытие пустых ячеек (для выравнивания)
-        if (day.isEmpty()) {
-            dayText.setVisibility(View.INVISIBLE);
-            return convertView;
+        int dayValue = -1;
+        if (dayStr != null && !dayStr.isEmpty()) {
+            try {
+                dayValue = Integer.parseInt(dayStr);
+            } catch (NumberFormatException e) {
+                dayValue = -1;
+            }
         }
 
-        dayText.setVisibility(View.VISIBLE);
-        int dayInt = Integer.parseInt(day);
-
-        // Выделение выбранного или текущего дня
-        if (dayInt == selectedDay) {
-            highlightSelected(dayText);
-        } else if (dayInt == currentDay) {
-            highlightToday(dayText);
+        // Выделение выбранного дня
+        if (selectedDay != -1 && dayValue == selectedDay) {
+            dayText.setBackgroundResource(R.drawable.selected_bg);
+            dayText.setTextColor(Color.WHITE);
+        }
+        // Выделение сегодняшнего дня
+        else if (currentDay != -1 && dayValue == currentDay) {
+            dayText.setBackgroundResource(R.drawable.today_bg);
+            dayText.setTextColor(Color.WHITE);
+        }
+        // Базовый стиль
+        else {
+            dayText.setBackgroundResource(R.drawable.day_cell_background);
         }
 
         return convertView;
     }
 
-    /**
-     * Применяет стиль для выбранного дня
-     */
-    private void highlightSelected(TextView dayText) {
-        dayText.setBackgroundResource(R.drawable.selected_bg);
-        dayText.setTextColor(Color.WHITE);
-    }
-
-    /**
-     * Применяет стиль для сегодняшнего дня
-     */
-    private void highlightToday(TextView dayText) {
-        dayText.setBackgroundResource(R.drawable.today_bg);
-        dayText.setTextColor(Color.WHITE);
-    }
-
-    /**
-     * Устанавливает выбранный день и обновляет отображение
-     */
     public void setSelectedDay(int day) {
         this.selectedDay = day;
         notifyDataSetChanged();
     }
 
-    /**
-     * Устанавливает текущий день и обновляет отображение
-     */
     public void setCurrentDay(int day) {
         this.currentDay = day;
         notifyDataSetChanged();

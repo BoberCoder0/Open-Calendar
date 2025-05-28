@@ -26,6 +26,9 @@ import androidx.viewpager2.widget.ViewPager2;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import androidx.core.content.ContextCompat;
 
 /**
  * Главная активность приложения, содержащая:
@@ -55,6 +58,10 @@ public class MainActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayShowTitleEnabled(false);
         }
 
+        // Работа с базой данных
+        database = AppDatabaseHelper.getInstance(this);
+        goalDao = database.goalDao();
+
         // Инициализация компонентов
         initViews();
         setupMonthPager();
@@ -62,9 +69,28 @@ public class MainActivity extends AppCompatActivity {
         initializeTodayButton();
         updateDateText(MonthPagerAdapter.INITIAL_POSITION);
 
-        // Работа с базой данных
-        database = AppDatabaseHelper.getInstance(this);
-        goalDao = database.goalDao();
+        Button plansTabButton = findViewById(R.id.plansTabButton);
+        Button goalsTabButton = findViewById(R.id.goalsTabButton);
+        RecyclerView plansRecyclerView = findViewById(R.id.plansRecyclerView);
+        RecyclerView goalsRecyclerView = findViewById(R.id.goalsRecyclerView);
+
+        // По умолчанию показываем планы
+        plansRecyclerView.setVisibility(View.VISIBLE);
+        goalsRecyclerView.setVisibility(View.GONE);
+
+        plansTabButton.setOnClickListener(v -> {
+            plansRecyclerView.setVisibility(View.VISIBLE);
+            goalsRecyclerView.setVisibility(View.GONE);
+            plansTabButton.setBackgroundTintList(ContextCompat.getColorStateList(this, R.color.today_highlight));
+            goalsTabButton.setBackgroundTintList(ContextCompat.getColorStateList(this, R.color.gray_600));
+        });
+
+        goalsTabButton.setOnClickListener(v -> {
+            plansRecyclerView.setVisibility(View.GONE);
+            goalsRecyclerView.setVisibility(View.VISIBLE);
+            plansTabButton.setBackgroundTintList(ContextCompat.getColorStateList(this, R.color.gray_600));
+            goalsTabButton.setBackgroundTintList(ContextCompat.getColorStateList(this, R.color.today_highlight));
+        });
 
         // Обработчик кнопки добавления цели
         findViewById(R.id.imageButton).setOnClickListener(v -> showAddGoalDialog());
@@ -94,6 +120,7 @@ public class MainActivity extends AppCompatActivity {
         // Создание и настройка диалогового окна
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         View dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_add_goal, null);
+
 
         // Получение ссылок на элементы диалога
         EditText titleInput = dialogView.findViewById(R.id.titleInput);
@@ -126,9 +153,10 @@ public class MainActivity extends AppCompatActivity {
                     // Сохранение в БД в фоновом потоке
                     new Thread(() -> {
                         goalDao.insert(goal);
-                        runOnUiThread(() -> {
-                            // Обновление списка на UI
-                            goalsAdapter.updateList(goalDao.getAllGoals());
+                        Executor executor = Executors.newSingleThreadExecutor();
+                        executor.execute(() -> {
+                            List<Goal> goals = goalDao.getAllGoals();
+                            runOnUiThread(() -> goalsAdapter.updateList(goals));
                         });
                     }).start();
                 })
@@ -150,8 +178,16 @@ public class MainActivity extends AppCompatActivity {
         Button goTodayButton = findViewById(R.id.GoTodayButton);
         goTodayButton.setOnClickListener(v -> goToToday());
 
+
+        Executor executor = Executors.newSingleThreadExecutor();
+        executor.execute(() -> {
+            List<Goal> goals = goalDao.getAllGoals();
+            runOnUiThread(() -> goalsAdapter.updateList(goals));
+        });
+
         // Настройка RecyclerView для целей
         goalsRecyclerView = findViewById(R.id.goalsRecyclerView);
+        //goalsRecyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         goalsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         goalsAdapter = new GoalsAdapter(new ArrayList<>(), this);
         goalsRecyclerView.setAdapter(goalsAdapter);

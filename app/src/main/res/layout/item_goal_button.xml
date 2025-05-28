@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Button xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/goalButton"
+    android:layout_width="wrap_content"
+    android:layout_height="48dp"
+    android:layout_marginEnd="8dp"
+    android:text="Цель"
+    android:backgroundTint="@color/today_highlight"
+    android:textColor="@color/white"
+    android:textSize="14sp"
+    android:minWidth="100dp"
+    android:gravity="center"/>
