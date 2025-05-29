@@ -1,5 +1,7 @@
 package com.example.opencalendar;
 
+import android.util.Log;
+
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
@@ -18,7 +20,9 @@ public class MonthPagerAdapter extends FragmentStateAdapter {
     @Override
     public Fragment createFragment(int position) {
         int monthOffset = position - INITIAL_POSITION;
-        return MonthFragment.newInstance(monthOffset);
+        MonthFragment fragment = MonthFragment.newInstance(monthOffset);
+        Log.d("PagerAdapter", "Creating fragment for position: " + position);
+        return fragment;
     }
 
     @Override
