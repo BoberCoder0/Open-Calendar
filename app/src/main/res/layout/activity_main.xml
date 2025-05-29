@@ -12,99 +12,9 @@
     android:layout_marginTop="10dp">
 
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/toolbar"
-        android:layout_width="412dp"
-        android:layout_height="54dp"
-        android:background="#0087FF4C"
-        android:minHeight="?attr/actionBarSize"
-        android:theme="?attr/actionBarTheme"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageButton
-        android:id="@+id/Account_Button"
-        android:layout_width="40dp"
-        android:layout_height="40dp"
-        android:layout_marginTop="10dp"
-        android:layout_marginEnd="10dp"
-        android:padding="0dp"
-        android:scaleType="centerCrop"
-        android:src="@drawable/kotia"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="@+id/toolbar"
-        app:layout_constraintTop_toTopOf="parent" />
-
-    <ImageButton
-        android:id="@+id/imageButton"
-        android:layout_width="18dp"
-        android:layout_height="19dp"
-        android:layout_marginTop="19dp"
-        android:layout_marginEnd="15dp"
-        android:backgroundTint="#00FFFFFF"
-        android:contentDescription="plus_button"
-        android:padding="0dp"
-        android:scaleType="centerCrop"
-        app:layout_constraintEnd_toStartOf="@+id/Account_Button"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="@+id/toolbar"
-        app:layout_constraintTop_toTopOf="@+id/toolbar"
-        app:srcCompat="@drawable/plus2_black" />
-
-    <TextView
-        android:id="@+id/YearText"
-        android:layout_width="71dp"
-        android:layout_height="34dp"
-        android:layout_marginStart="10dp"
-        android:layout_marginTop="10dp"
-        android:text="2025"
-        android:textColor="@color/black"
-        android:textSize="30dp"
-        android:theme="@style/Base.Theme.OpenCalendar"
-        app:layout_constraintEnd_toStartOf="@+id/MonthText"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/toolbar" />
-
-    <TextView
-        android:id="@+id/MonthText"
-        android:layout_width="48dp"
-        android:layout_height="34dp"
-        android:layout_marginTop="10dp"
-        android:text=".04"
-        android:textColor="@color/black"
-        android:textSize="30dp"
-        android:theme="@style/Base.Theme.OpenCalendar"
-        app:layout_constraintStart_toEndOf="@+id/YearText"
-        app:layout_constraintTop_toTopOf="@+id/toolbar" />
-
-    <TextView
-        android:id="@+id/DayText"
-        android:layout_width="48dp"
-        android:layout_height="34dp"
-        android:layout_marginTop="10dp"
-        android:text=".27"
-        android:textColor="@color/black"
-        android:textSize="30dp"
-        android:theme="@style/Base.Theme.OpenCalendar"
-        app:layout_constraintStart_toEndOf="@+id/MonthText"
-        app:layout_constraintTop_toTopOf="@+id/toolbar" />
-
-    <Button
-        android:id="@+id/GoTodayButton"
-        android:layout_width="45dp"
-        android:layout_height="40dp"
-        android:layout_marginStart="100dp"
-        android:layout_marginTop="5dp"
-        android:backgroundTint="#00FFFFFF"
-        android:padding="0dp"
-        android:textColor="@color/today_highlight"
-        android:textSize="30dp"
-        app:layout_constraintStart_toEndOf="@+id/DayText"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:text="27" /> <!-- Убрано фиксированное значение, будет устанавливаться программно -->
+    <include
+        layout="@layout/toolbar_custom"
+        android:id="@+id/toolbar" />
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar2"
@@ -116,36 +26,6 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/toolbar" />
-
-    <TextView
-        android:id="@+id/textView4"
-        android:layout_width="367dp"
-        android:layout_height="19dp"
-        android:layout_marginStart="9dp"
-        android:layout_marginTop="3dp"
-        android:text=" Пн           Вт           Ср            Чт           Пт           Сб            Вс"
-        android:textColor="@color/black"
-        android:theme="@style/Base.Theme.OpenCalendar"
-        app:layout_constraintEnd_toEndOf="@+id/toolbar2"
-        app:layout_constraintStart_toStartOf="@+id/toolbar2"
-        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
-
-    <ScrollView
-        android:layout_width="396dp"
-        android:layout_height="337dp"
-        android:layout_marginStart="1dp"
-        android:layout_marginTop="80dp"
-        android:layout_marginEnd="1dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/toolbar">
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical" />
-
-    </ScrollView>
 
     <FrameLayout
         android:id="@+id/frameLayout"
@@ -162,6 +42,6 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/textView4" />
+        app:layout_constraintTop_toBottomOf="@+id/toolbar" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

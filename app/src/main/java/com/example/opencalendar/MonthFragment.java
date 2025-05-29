@@ -121,17 +121,17 @@ public class MonthFragment extends Fragment {
         List<String> days = new ArrayList<>();
         int daysInMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
 
-        // Устанавливаем 1-е число месяца и получаем день недели
+        calendar.setFirstDayOfWeek(Calendar.MONDAY);
         calendar.set(Calendar.DAY_OF_MONTH, 1);
         int firstDayOfWeek = calendar.get(Calendar.DAY_OF_WEEK);
 
-        // Добавляем пустые строки для выравнивания первого дня
-        // (Calendar.SUNDAY = 1, Calendar.SATURDAY = 7)
-        for (int i = 1; i < firstDayOfWeek; i++) {
+        // Смещение: если первый день недели — понедельник
+        int offset = (firstDayOfWeek + 5) % 7; // Пн=0, Вт=1, ..., Вс=6
+
+        for (int i = 0; i < offset; i++) {
             days.add("");
         }
 
-        // Добавляем все дни месяца
         for (int i = 1; i <= daysInMonth; i++) {
             days.add(String.valueOf(i));
         }
