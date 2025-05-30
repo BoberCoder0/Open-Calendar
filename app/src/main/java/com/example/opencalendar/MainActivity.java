@@ -12,6 +12,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.widget.NestedScrollView;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
@@ -66,18 +67,17 @@ public class MainActivity extends AppCompatActivity {
             dayText.setText(String.format(".%02d", day));
         });
 
-        setupBottomTabs();
+        //setupBottomTabs();
+        setupBottomTabs(savedInstanceState);
     }
 
-    private void setupBottomTabs() {
+    private void setupBottomTabs(Bundle savedInstanceState) {
         Button btnDaySchedule = findViewById(R.id.btnDaySchedule);
         Button btnGoals = findViewById(R.id.btnGoals);
 
         btnDaySchedule.setOnClickListener(v -> showDaySchedule());
         btnGoals.setOnClickListener(v -> showGoals());
 
-        // По умолчанию показываем график дня
-        // Сохраняем текущий фрагмент
         if (savedInstanceState == null) {
             showDaySchedule();
         }
@@ -94,13 +94,27 @@ public class MainActivity extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.contentContainer, new DayScheduleFragment())
                 .commit();
+
+        // Настраиваем поведение скроллинга
+        setupScrollingBehavior(true);
     }
 
     private void showGoals() {
-        // Здесь будет фрагмент целей
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.contentContainer, new GoalsFragment())
                 .commit();
+
+        // Настраиваем поведение скроллинга
+        setupScrollingBehavior(false);
+    }
+
+    private void setupScrollingBehavior(boolean enableNestedScrolling) {
+        View contentContainer = findViewById(R.id.contentContainer);
+        if (contentContainer instanceof NestedScrollView) {
+            ((NestedScrollView) contentContainer).setNestedScrollingEnabled(enableNestedScrolling);
+        } else if (contentContainer instanceof RecyclerView) {
+            ((RecyclerView) contentContainer).setNestedScrollingEnabled(enableNestedScrolling);
+        }
     }
 
     /**
@@ -141,10 +155,16 @@ public class MainActivity extends AppCompatActivity {
         monthViewPager.setAdapter(monthPagerAdapter);
 
         // Устанавливаем начальную позицию (для бесконечного скролла)
-        monthViewPager.setCurrentItem(MonthPagerAdapter.INITIAL_POSITION, false);
+        //monthViewPager.setCurrentItem(MonthPagerAdapter.INITIAL_POSITION, false);
 
         //Замените DepthPageTransformer на новый:
         monthViewPager.setPageTransformer(new SlidePageTransformer());
+
+        // Устанавливаем позицию после инициализации
+        monthViewPager.post(() -> {
+            monthViewPager.setCurrentItem(MonthPagerAdapter.INITIAL_POSITION, false);
+            updateDateText(MonthPagerAdapter.INITIAL_POSITION);
+        });
 
         /*// Добавляем анимацию перелистывания страниц
         monthViewPager.setPageTransformer(new DepthPageTransformer());*/
@@ -158,13 +178,13 @@ public class MainActivity extends AppCompatActivity {
         });
 
         // Оптимизация анимации и скролла
-        monthViewPager.post(() -> {
+        /*monthViewPager.post(() -> {
             RecyclerView recyclerView = (RecyclerView) monthViewPager.getChildAt(0);
             recyclerView.setItemAnimator(null);  // Отключаем анимацию элементов
             recyclerView.setLayoutFrozen(false);  // Разрешаем изменение layout
             // Устанавливаем параметры скролла
             recyclerView.setScrollingTouchSlop(RecyclerView.TOUCH_SLOP_PAGING);
-        });
+        });*/
     }
 
     /**
@@ -208,7 +228,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Обработчики кликов
         accountButton.setOnClickListener(v -> openAccount());
-        findViewById(R.id.imageButton).setOnClickListener(v -> addEvent());
+        //findViewById(R.id.imageButton).setOnClickListener(v -> addEvent());
 
         findViewById(R.id.imageButton).setOnClickListener(v -> {
             DayScheduleFragment scheduleFragment = (DayScheduleFragment) getSupportFragmentManager()

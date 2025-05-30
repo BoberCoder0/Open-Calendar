@@ -10,7 +10,8 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 import com.example.opencalendar.MonthFragment;
 
 public class MonthPagerAdapter extends FragmentStateAdapter {
-    public static final int INITIAL_POSITION = Integer.MAX_VALUE / 2;
+    private static final int TOTAL_PAGES = 5000; // Вместо 10000
+    public static final int INITIAL_POSITION = TOTAL_PAGES / 2;
 
     public MonthPagerAdapter(@NonNull FragmentActivity fragmentActivity) {
         super(fragmentActivity);
@@ -27,6 +28,6 @@ public class MonthPagerAdapter extends FragmentStateAdapter {
 
     @Override
     public int getItemCount() {
-        return 10000;
+        return TOTAL_PAGES;
     }
 }

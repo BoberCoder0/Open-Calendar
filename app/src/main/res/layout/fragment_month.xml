@@ -26,21 +26,21 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="-2dp"
+            android:layout_marginStart="0dp"
             android:layout_marginEnd="12dp"
             android:gravity="center"
             android:orientation="horizontal"
             android:paddingBottom="8dp">
 
             <TextView
-                android:layout_width="3dp"
+                android:layout_width="8dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="Пн" />
 
             <TextView
-                android:layout_width="0dp"
+                android:layout_width="1dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
                 android:gravity="center"
@@ -61,8 +61,8 @@
                 android:text="Чт" />
 
             <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_width="6dp"
+                android:layout_height="match_parent"
                 android:layout_weight="1"
                 android:gravity="center"
                 android:text="Пт" />

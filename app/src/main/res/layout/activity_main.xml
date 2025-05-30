@@ -7,18 +7,32 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+    <!-- AppBar с тулбаром и календарем -->
     <com.google.android.material.appbar.AppBarLayout
         android:id="@+id/main"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:theme="@style/Base.Theme.OpenCalendar">
+        android:theme="@style/Base.Theme.OpenCalendar"
+        app:layout_behavior="com.google.android.material.appbar.AppBarLayout$ScrollingViewBehavior">
 
         <include
             layout="@layout/toolbar_custom"
             android:id="@+id/toolbar" />
 
+        <!-- Контейнер для календаря -->
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_scrollFlags="scroll|enterAlways">
+
+            <androidx.viewpager2.widget.ViewPager2
+                android:id="@+id/monthViewPager"
+                android:layout_width="match_parent"
+                android:layout_height="310dp" />
+        </FrameLayout>
     </com.google.android.material.appbar.AppBarLayout>
 
+    <!-- Кнопки переключения режимов -->
     <LinearLayout
         android:id="@+id/bottomTabs"
         android:layout_width="match_parent"
@@ -26,7 +40,6 @@
         android:orientation="horizontal"
         android:background="#F0F0F0"
         android:layout_gravity="top"
-        android:layout_marginTop="0dp"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <Button
@@ -46,18 +59,11 @@
             android:background="@drawable/today_bg"/>
     </LinearLayout>
 
+    <!-- Контейнер для фрагментов -->
     <FrameLayout
         android:id="@+id/contentContainer"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_below="@id/bottomTabs"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior"
-        android:layout_marginTop="0dp">
-
-        <androidx.viewpager2.widget.ViewPager2
-            android:id="@+id/monthViewPager"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-    </FrameLayout>
-
+        android:layout_height="377dp"
+        android:layout_marginTop="50dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
 </androidx.coordinatorlayout.widget.CoordinatorLayout>
