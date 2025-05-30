@@ -47,7 +47,7 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
         setProperty("archivesBaseName",
-                "war_policy-v${defaultConfig.versionName}-build${defaultConfig.versionCode}")
+                "Open Calendar-v${defaultConfig.versionName}--build${defaultConfig.versionCode}")
     }
 
     compileOptions {

@@ -1,11 +1,9 @@
-package com.example.opencalendar;
+package com.example.opencalendar.Event;
 
 import android.os.Build;
 import android.os.Bundle;
 
 import androidx.fragment.app.DialogFragment;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Lifecycle;
 
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,7 +12,9 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TimePicker;
-import com.example.opencalendar.Event;
+
+import com.example.opencalendar.Month.DayScheduleFragment;
+import com.example.opencalendar.R;
 
 
 public class AddEventDialog extends DialogFragment {

@@ -1,4 +1,4 @@
-package com.example.opencalendar;
+package com.example.opencalendar.Event;
 
 import android.os.Bundle;
 
@@ -8,6 +8,8 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.example.opencalendar.R;
 
 public class EventDetailsFragment extends Fragment {
 

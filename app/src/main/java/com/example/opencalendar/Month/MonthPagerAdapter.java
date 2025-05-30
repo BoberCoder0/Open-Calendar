@@ -1,4 +1,4 @@
-package com.example.opencalendar;
+package com.example.opencalendar.Month;
 
 import android.util.Log;
 
@@ -6,8 +6,6 @@ import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
-
-import com.example.opencalendar.MonthFragment;
 
 public class MonthPagerAdapter extends FragmentStateAdapter {
     private static final int TOTAL_PAGES = 5000; // Вместо 10000

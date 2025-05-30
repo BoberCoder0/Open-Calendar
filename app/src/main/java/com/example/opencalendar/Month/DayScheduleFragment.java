@@ -1,22 +1,26 @@
-package com.example.opencalendar;
+package com.example.opencalendar.Month;
 
 import android.graphics.Color;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
-import androidx.coordinatorlayout.widget.CoordinatorLayout;
 import androidx.fragment.app.Fragment;
 import android.os.Handler;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import com.google.android.material.appbar.AppBarLayout;
+
+import com.example.opencalendar.Event.AddEventDialog;
+import com.example.opencalendar.Event.Event;
+import com.example.opencalendar.Event.EventDetailsFragment;
+import com.example.opencalendar.Goal.AddGoalDialog;
+import com.example.opencalendar.R;
+
 import java.util.Calendar;
 
 public class DayScheduleFragment extends Fragment {

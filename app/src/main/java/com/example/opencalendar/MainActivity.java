@@ -3,6 +3,7 @@ package com.example.opencalendar;
 import android.graphics.Outline;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
 import android.view.View;
 import android.view.ViewOutlineProvider;
 import android.widget.Button;
@@ -13,9 +14,15 @@ import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.widget.NestedScrollView;
+import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
 
+import com.example.opencalendar.Goal.AddGoalDialog;
+import com.example.opencalendar.Goal.GoalsFragment;
+import com.example.opencalendar.Month.DayScheduleFragment;
+import com.example.opencalendar.Month.MonthPagerAdapter;
+import com.example.opencalendar.Month.SlidePageTransformer;
 import com.google.android.material.appbar.AppBarLayout;
 
 import java.util.Calendar;
@@ -47,6 +54,7 @@ public class MainActivity extends AppCompatActivity {
         initViews();
         setupMonthPager();
         setupAccountButton();
+        findViewById(R.id.imageButton).setOnClickListener(v -> showAddGoalDialog());
 
         // Установка текущей даты при запуске
         Calendar today = Calendar.getInstance();
@@ -67,8 +75,36 @@ public class MainActivity extends AppCompatActivity {
             dayText.setText(String.format(".%02d", day));
         });
 
+
+
         //setupBottomTabs();
         setupBottomTabs(savedInstanceState);
+    }
+
+    private void showAddGoalDialog() {
+        AddGoalDialog dialog = new AddGoalDialog();
+        dialog.setListener(new AddGoalDialog.AddGoalDialogListener() {
+            @Override
+            public void onGoalAdded(String title, String description, Calendar date, int color) {
+                // Обновленная сигнатура с цветом
+                Fragment currentFragment = getSupportFragmentManager()
+                        .findFragmentById(R.id.contentContainer);
+
+                if (currentFragment instanceof GoalsFragment) {
+                    ((GoalsFragment) currentFragment).onGoalAdded(title, description, date, color);
+                } else {
+                    showGoals();
+                    new Handler().postDelayed(() -> {
+                        Fragment goalsFragment = getSupportFragmentManager()
+                                .findFragmentById(R.id.contentContainer);
+                        if (goalsFragment instanceof GoalsFragment) {
+                            ((GoalsFragment) goalsFragment).onGoalAdded(title, description, date, color);
+                        }
+                    }, 100);
+                }
+            }
+        });
+        dialog.show(getSupportFragmentManager(), "AddGoalDialog");
     }
 
     private void setupBottomTabs(Bundle savedInstanceState) {
@@ -220,25 +256,22 @@ public class MainActivity extends AppCompatActivity {
         accountButton.setOutlineProvider(new ViewOutlineProvider() {
             @Override
             public void getOutline(View view, Outline outline) {
-                // Устанавливаем закругленный прямоугольник с радиусом 32f
                 outline.setRoundRect(0, 0, view.getWidth(), view.getHeight(), 32f);
             }
         });
-        accountButton.setClipToOutline(true);  // Включаем обрезку по контуру
+        accountButton.setClipToOutline(true);
 
         // Обработчики кликов
         accountButton.setOnClickListener(v -> openAccount());
-        //findViewById(R.id.imageButton).setOnClickListener(v -> addEvent());
 
-        findViewById(R.id.imageButton).setOnClickListener(v -> {
-            DayScheduleFragment scheduleFragment = (DayScheduleFragment) getSupportFragmentManager()
-                    .findFragmentById(R.id.contentContainer);
-
-            if (scheduleFragment != null) {
-                scheduleFragment.showEventTypeDialog();
-            }
-        });
-
+        // УДАЛИТЕ ЭТОТ БЛОК КОДА:
+        // findViewById(R.id.imageButton).setOnClickListener(v -> {
+        //     DayScheduleFragment scheduleFragment = (DayScheduleFragment) getSupportFragmentManager()
+        //             .findFragmentById(R.id.contentContainer);
+        //     if (scheduleFragment != null) {
+        //         scheduleFragment.showEventTypeDialog();
+        //     }
+        // });
     }
 
     /**

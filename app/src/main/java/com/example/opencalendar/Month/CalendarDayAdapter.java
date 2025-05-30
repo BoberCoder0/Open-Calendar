@@ -1,9 +1,8 @@
-package com.example.opencalendar;
+package com.example.opencalendar.Month;
 
 import android.content.Context;
 import android.graphics.Color;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.LayerDrawable;
+import android.graphics.drawable.GradientDrawable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,14 +10,12 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.core.content.ContextCompat;
 
-import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.LayerDrawable;
-import androidx.core.content.ContextCompat;
+import com.example.opencalendar.R;
 
 
 public class CalendarDayAdapter extends ArrayAdapter<String> {
@@ -28,6 +25,7 @@ public class CalendarDayAdapter extends ArrayAdapter<String> {
     private int highlightColor = Color.parseColor("#FF4285F4"); // Голубой цвет для выделения
     private int selectedColor = Color.parseColor("#FF00FF00"); // Цвет для выделения выбранного
     private int selectedPosition = -1;  // Выбранный день
+    private Map<Integer, Integer> dayColors = new HashMap<>(); // День -> Цвет
 
     /**
      * Конструктор адаптера
@@ -38,6 +36,11 @@ public class CalendarDayAdapter extends ArrayAdapter<String> {
     public CalendarDayAdapter(@NonNull Context context, List<String> days, int currentDay) {
         super(context, 0, days);
         this.currentDay = currentDay;
+    }
+
+    public void setDayColors(Map<Integer, Integer> dayColors) {
+        this.dayColors = dayColors;
+        notifyDataSetChanged();
     }
 
     @NonNull
@@ -109,9 +112,18 @@ public class CalendarDayAdapter extends ArrayAdapter<String> {
         dayText.setBackgroundResource(0);
         dayText.setTextColor(Color.BLACK);*/
 
-        if (day.isEmpty()) {
-            dayText.setVisibility(View.INVISIBLE);
-            return convertView;
+        if (!day.isEmpty()) {
+            int dayNum = Integer.parseInt(day);
+
+            // Проверяем есть ли цель для этого дня
+            if (dayColors.containsKey(dayNum)) {
+                int color = dayColors.get(dayNum);
+                GradientDrawable drawable = new GradientDrawable();
+                drawable.setShape(GradientDrawable.OVAL);
+                drawable.setColor(adjustAlpha(color, 0.5f)); // Полупрозрачное заполнение
+                drawable.setStroke(2, color); // Граница цвета цели
+                dayText.setBackground(drawable);
+            }
         }
 
         dayText.setVisibility(View.VISIBLE);
@@ -155,6 +167,11 @@ public class CalendarDayAdapter extends ArrayAdapter<String> {
         }
 
         return convertView;
+    }
+
+    private int adjustAlpha(int color, float factor) {
+        int alpha = Math.round(Color.alpha(color) * factor);
+        return Color.argb(alpha, Color.red(color), Color.green(color), Color.blue(color));
     }
 
     /**

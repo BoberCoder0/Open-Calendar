@@ -1,4 +1,4 @@
-package com.example.opencalendar;
+package com.example.opencalendar.Month;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -9,11 +9,18 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import com.example.opencalendar.Goal.GoalRepository;
+
+import com.example.opencalendar.Goal.Goal;
+import com.example.opencalendar.R;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class MonthFragment extends Fragment {
 
@@ -74,8 +81,17 @@ public class MonthFragment extends Fragment {
             today = todayCal.get(Calendar.DAY_OF_MONTH);
         }
 
-        // 5. Создаем адаптер с передачей дней и номера сегодняшнего дня
-        CalendarDayAdapter adapter = new CalendarDayAdapter(requireContext(), days, today);
+        // Получаем цвета для дней
+        Map<Integer, Integer> dayColors = getDayColors(calendar);
+
+        // Создаем адаптер
+        CalendarDayAdapter adapter = new CalendarDayAdapter(
+                requireContext(),
+                days,
+                today
+        );
+        adapter.setDayColors(dayColors);
+        // Установите адаптер для GridView
         calendarGrid.setAdapter(adapter);
 
         // 6. Настраиваем обработчик кликов по дням
@@ -101,6 +117,23 @@ public class MonthFragment extends Fragment {
                 onDaySelected(currentYear, currentMonth, day);
             }
         });
+    }
+
+    private Map<Integer, Integer> getDayColors(Calendar monthCalendar) {
+        Map<Integer, Integer> colors = new HashMap<>();
+        GoalRepository repository = GoalRepository.getInstance();
+
+        for (Goal goal : repository.getAllGoals()) {
+            Calendar goalDate = goal.getDate();
+
+            if (goalDate.get(Calendar.YEAR) == monthCalendar.get(Calendar.YEAR) &&
+                    goalDate.get(Calendar.MONTH) == monthCalendar.get(Calendar.MONTH)) {
+
+                int day = goalDate.get(Calendar.DAY_OF_MONTH);
+                colors.put(day, goal.getColor());
+            }
+        }
+        return colors;
     }
 
     private void onDaySelected(int year, int month, int day) {

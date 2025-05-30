@@ -1,4 +1,4 @@
-package com.example.opencalendar;
+package com.example.opencalendar.Event;
 
 import android.os.Parcel;
 import android.os.Parcelable;
