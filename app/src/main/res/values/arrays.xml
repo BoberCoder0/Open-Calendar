@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="repeat_options">
+        <item>Один раз</item>
+        <item>Ежедневно</item>
+        <item>По рабочим дням</item>
+        <item>По выходным</item>
+        <item>Еженедельно</item>
+        <item>Ежемесячно</item>
+    </string-array>
+</resources>

@@ -116,7 +116,9 @@ public class CalendarDayAdapter extends ArrayAdapter<String> {
 
         dayText.setVisibility(View.VISIBLE);
 
-        // Для выделенных дней создаем LayerDrawable, чтобы сохранить границу
+        /// СТАРАЯ ЛОГИКА
+
+        /*// Для выделенных дней создаем LayerDrawable, чтобы сохранить границу
         if ((currentDay != -1 && day.equals(String.valueOf(currentDay)))) {
             LayerDrawable layers = new LayerDrawable(new Drawable[]{
                     ContextCompat.getDrawable(getContext(), R.drawable.today_bg),
@@ -128,12 +130,25 @@ public class CalendarDayAdapter extends ArrayAdapter<String> {
         }
 
         // Выделение сегодняшнего дня
-        /*if (currentDay != -1 && day.equals(String.valueOf(currentDay))) {
+        *//*if (currentDay != -1 && day.equals(String.valueOf(currentDay))) {
             dayText.setBackgroundResource(R.drawable.today_bg);
             dayText.setTextColor(Color.WHITE);
-        }*/
+        }*//*
 
         // Выделение выбранного дня
+        if (selectedDay != -1 && day.equals(String.valueOf(selectedDay))) {
+            dayText.setBackgroundResource(R.drawable.selected_bg);
+            dayText.setTextColor(Color.WHITE);
+        }
+
+        return convertView;*/
+
+        // Упрощенная логика выделения
+        if (currentDay != -1 && day.equals(String.valueOf(currentDay))) {
+            dayText.setBackgroundResource(R.drawable.today_bg);
+            dayText.setTextColor(Color.WHITE);
+        }
+
         if (selectedDay != -1 && day.equals(String.valueOf(selectedDay))) {
             dayText.setBackgroundResource(R.drawable.selected_bg);
             dayText.setTextColor(Color.WHITE);

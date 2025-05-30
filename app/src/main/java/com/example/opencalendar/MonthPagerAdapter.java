@@ -27,6 +27,6 @@ public class MonthPagerAdapter extends FragmentStateAdapter {
 
     @Override
     public int getItemCount() {
-        return Integer.MAX_VALUE;
+        return 10000;
     }
 }

@@ -8,10 +8,15 @@ import android.view.ViewOutlineProvider;
 import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 import androidx.viewpager2.widget.ViewPager2;
+
+import com.google.android.material.appbar.AppBarLayout;
+
 import java.util.Calendar;
 
 
@@ -61,6 +66,41 @@ public class MainActivity extends AppCompatActivity {
             dayText.setText(String.format(".%02d", day));
         });
 
+        setupBottomTabs();
+    }
+
+    private void setupBottomTabs() {
+        Button btnDaySchedule = findViewById(R.id.btnDaySchedule);
+        Button btnGoals = findViewById(R.id.btnGoals);
+
+        btnDaySchedule.setOnClickListener(v -> showDaySchedule());
+        btnGoals.setOnClickListener(v -> showGoals());
+
+        // По умолчанию показываем график дня
+        // Сохраняем текущий фрагмент
+        if (savedInstanceState == null) {
+            showDaySchedule();
+        }
+    }
+
+    // Добавляем сохранение состояния
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+        // TODO: Сохраняем текущий фрагмент
+    }
+
+    private void showDaySchedule() {
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.contentContainer, new DayScheduleFragment())
+                .commit();
+    }
+
+    private void showGoals() {
+        // Здесь будет фрагмент целей
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.contentContainer, new GoalsFragment())
+                .commit();
     }
 
     /**
@@ -169,6 +209,16 @@ public class MainActivity extends AppCompatActivity {
         // Обработчики кликов
         accountButton.setOnClickListener(v -> openAccount());
         findViewById(R.id.imageButton).setOnClickListener(v -> addEvent());
+
+        findViewById(R.id.imageButton).setOnClickListener(v -> {
+            DayScheduleFragment scheduleFragment = (DayScheduleFragment) getSupportFragmentManager()
+                    .findFragmentById(R.id.contentContainer);
+
+            if (scheduleFragment != null) {
+                scheduleFragment.showEventTypeDialog();
+            }
+        });
+
     }
 
     /**
@@ -183,6 +233,10 @@ public class MainActivity extends AppCompatActivity {
      */
     private void addEvent() {
         // TODO: Реализовать добавление события
+    }
+
+    public AppBarLayout getAppBarLayout() {
+        return findViewById(R.id.main); // Добавьте ID для AppBarLayout
     }
 }
 
